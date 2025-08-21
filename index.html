@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCAS Hazard Detection Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="hud">
+            <div class="speed-display">Speed: <span id="speed-value">85</span> km/h</div>
+            <div class="ttc-display">TTC: <span id="ttc-value">6.8</span> s</div>
+            <div class="led-indicators">
+                <img id="led-green" src="assets/led_green.png" alt="Green LED">
+                <img id="led-yellow" src="assets/led_yellow.png" alt="Yellow LED" class="inactive">
+                <img id="led-red" src="assets/led_red.png" alt="Red LED" class="inactive">
+            </div>
+        </div>
+        <div id="game-canvas"></div>
+        <div id="controls">
+            <input type="range" id="speed-slider" min="0" max="120" value="85">
+            <button id="play-btn">▶️ Play</button>
+            <button id="stop-btn">⏹️ Stop</button>
+            <button id="replay-btn">↺ Replay</button>
+            <button id="export-btn">💾 Export Data</button>
+        </div>
+        <div id="ttc-chart">
+            <h3>TTC History</h3>
+            <canvas id="chart-canvas" width="300" height="150"></canvas>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
