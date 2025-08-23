@@ -1,12 +1,13 @@
 // MCAS Hazard Detection Simulator - Phaser + Chart.js
 
 let speed = 85; // initial speed
-let distance = 150; // starting distance to obstacle
+let distance = 150; // starting distance to closest obstacle
 let braking = false;
 let accelerating = false;
 let chart; // Chart.js instance
 let carVelocity = 0; // Car horizontal velocity
 const CAR_SPEED = 5; // Speed of car movement left/right
+const OBSTACLE_TYPES = ['truck', 'car1', 'car2', 'van', 'suv']; // 5 obstacle types
 
 class MCASScene extends Phaser.Scene {
   constructor() {
@@ -16,13 +17,17 @@ class MCASScene extends Phaser.Scene {
   preload() {
     this.load.image('road', 'assets/road.png');
     this.load.image('car', 'assets/car.png');
-    this.load.image('obstacle', 'assets/obstacle.png');
+    this.load.image('truck', 'assets/truck.png'); // Malfunctioned truck
+    this.load.image('car1', 'assets/car1.png'); // Different car type 1
+    this.load.image('car2', 'assets/car2.png'); // Different car type 2
+    this.load.image('van', 'assets/van.png'); // Van
+    this.load.image('suv', 'assets/suv.png'); // SUV
   }
 
   create() {
     this.road = this.add.tileSprite(400, 300, 800, 600, 'road');
     this.car = this.add.sprite(400, 500, 'car').setScale(0.5);
-    this.obstacle = this.add.sprite(400, 150, 'obstacle').setScale(0.4);
+    this.obstacles = this.add.group(); // Group to manage multiple obstacles
 
     // Keyboard controls
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -35,20 +40,22 @@ class MCASScene extends Phaser.Scene {
 
     this.input.on('pointerup', (pointer) => {
       const swipeDistance = pointer.x - touchStartX;
-      const swipeThreshold = 50; // Minimum distance for a swipe
+      const swipeThreshold = 50;
 
       if (Math.abs(swipeDistance) > swipeThreshold) {
-        if (swipeDistance > 0) {
-          // Swipe right
-          carVelocity = CAR_SPEED;
-        } else {
-          // Swipe left
-          carVelocity = -CAR_SPEED;
-        }
-        // Reset velocity after a short duration
+        carVelocity = swipeDistance > 0 ? CAR_SPEED : -CAR_SPEED;
         this.time.delayedCall(200, () => {
           carVelocity = 0;
         });
+      }
+    });
+
+    // Spawn obstacles periodically
+    this.time.addEvent({
+      delay: 2000, // Spawn every 2 seconds
+      loop: true,
+      callback: () => {
+        this.spawnObstacle();
       }
     });
 
@@ -60,8 +67,8 @@ class MCASScene extends Phaser.Scene {
         if (accelerating) speed = Math.min(speed + 1, 120);
         if (braking) speed = Math.max(speed - 2, 0);
 
-        // distance decreases with speed
-        distance -= speed * 0.05;
+        // Find closest obstacle for distance calculation
+        distance = this.getClosestObstacleDistance();
         if (distance < 20) distance = 20;
 
         let ttc = distance / (speed / 3.6);
@@ -96,6 +103,34 @@ class MCASScene extends Phaser.Scene {
     document.getElementById('toggle-chart').addEventListener('click', toggleChart);
   }
 
+  spawnObstacle() {
+    const type = Phaser.Math.RND.pick(OBSTACLE_TYPES);
+    let xPosition;
+    let velocityY = speed * 0.2; // Default downward movement
+
+    // Special case for malfunctioned truck
+    if (type === 'truck' && Phaser.Math.Between(0, 100) < 20) { // 20% chance to be stopped
+      xPosition = 150; // Left side
+      velocityY = 0; // Stopped
+    } else {
+      xPosition = Phaser.Math.Between(100, 700); // Random lane position
+    }
+
+    const obstacle = this.obstacles.create(xPosition, -50, type).setScale(0.4);
+    obstacle.setData('velocityY', velocityY);
+  }
+
+  getClosestObstacleDistance() {
+    let minDistance = 1000;
+    this.obstacles.getChildren().forEach(obstacle => {
+      const dist = obstacle.y - this.car.y;
+      if (dist > 0 && dist < minDistance) {
+        minDistance = dist;
+      }
+    });
+    return minDistance;
+  }
+
   update() {
     this.road.tilePositionY -= speed * 0.2;
 
@@ -104,15 +139,22 @@ class MCASScene extends Phaser.Scene {
       carVelocity = -CAR_SPEED;
     } else if (this.cursors.right.isDown) {
       carVelocity = CAR_SPEED;
-    } else if (!this.input.activePointer.isDown) { // Only reset if no touch input
+    } else if (!this.input.activePointer.isDown) {
       carVelocity *= 0.9; // Smooth deceleration
     }
 
     // Update car position
     this.car.x += carVelocity;
-
-    // Keep car within bounds
     this.car.x = Phaser.Math.Clamp(this.car.x, 50, 750);
+
+    // Update obstacles
+    this.obstacles.getChildren().forEach(obstacle => {
+      obstacle.y += obstacle.getData('velocityY');
+      // Remove obstacles that go off-screen
+      if (obstacle.y > 650) {
+        obstacle.destroy();
+      }
+    });
   }
 }
 
