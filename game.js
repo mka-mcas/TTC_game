@@ -5,6 +5,8 @@ let distance = 150; // starting distance to obstacle
 let braking = false;
 let accelerating = false;
 let chart; // Chart.js instance
+let carVelocity = 0; // Car horizontal velocity
+const CAR_SPEED = 5; // Speed of car movement left/right
 
 class MCASScene extends Phaser.Scene {
   constructor() {
@@ -19,9 +21,36 @@ class MCASScene extends Phaser.Scene {
 
   create() {
     this.road = this.add.tileSprite(400, 300, 800, 600, 'road');
-
     this.car = this.add.sprite(400, 500, 'car').setScale(0.5);
     this.obstacle = this.add.sprite(400, 150, 'obstacle').setScale(0.4);
+
+    // Keyboard controls
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+    // Swipe controls for mobile
+    let touchStartX = 0;
+    this.input.on('pointerdown', (pointer) => {
+      touchStartX = pointer.x;
+    });
+
+    this.input.on('pointerup', (pointer) => {
+      const swipeDistance = pointer.x - touchStartX;
+      const swipeThreshold = 50; // Minimum distance for a swipe
+
+      if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0) {
+          // Swipe right
+          carVelocity = CAR_SPEED;
+        } else {
+          // Swipe left
+          carVelocity = -CAR_SPEED;
+        }
+        // Reset velocity after a short duration
+        this.time.delayedCall(200, () => {
+          carVelocity = 0;
+        });
+      }
+    });
 
     // HUD update loop
     this.time.addEvent({
@@ -69,6 +98,21 @@ class MCASScene extends Phaser.Scene {
 
   update() {
     this.road.tilePositionY -= speed * 0.2;
+
+    // Handle keyboard input
+    if (this.cursors.left.isDown) {
+      carVelocity = -CAR_SPEED;
+    } else if (this.cursors.right.isDown) {
+      carVelocity = CAR_SPEED;
+    } else if (!this.input.activePointer.isDown) { // Only reset if no touch input
+      carVelocity *= 0.9; // Smooth deceleration
+    }
+
+    // Update car position
+    this.car.x += carVelocity;
+
+    // Keep car within bounds
+    this.car.x = Phaser.Math.Clamp(this.car.x, 50, 750);
   }
 }
 
