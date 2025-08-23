@@ -11,11 +11,11 @@ const OBSTACLE_TYPES = ['truck', 'car1', 'car2', 'van', 'suv']; // 5 obstacle ty
 
 // Define custom scales for each obstacle type
 const OBSTACLE_SCALES = {
-  truck: 0.3, // Larger but scaled down more
-  car1: 0.35,
-  car2: 0.35,
-  van: 0.32,
-  suv: 0.33
+  truck: 0.2, // Larger but scaled down more
+  car1: 0.2,
+  car2: 0.4,
+  van: 0.2,
+  suv: 0.2
 };
 
 class MCASScene extends Phaser.Scene {
@@ -104,3 +104,4 @@ class MCASScene extends Phaser.Scene {
     });
 
     document.getElementById('
+
