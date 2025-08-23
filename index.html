@@ -1,74 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCAS Hazard Detection Simulator</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCAS Hazard Detection Simulator</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>MCAS Hazard Detection Simulator</h1>
-            <p class="subtitle">Experience real-time threat assessment and collision avoidance technology</p>
-        </header>
-        <div class="game-section">
-            <div class="simulation-container">
-                <div id="game-container">
-                    <div id="hud">
-                        <div class="speed-display">Speed: <span id="speed-value">85</span> km/h</div>
-                        <div class="ttc-display">TTC: <span id="ttc-value">6.8</span> s</div>
-                        <div class="led-indicators">
-                            <span id="led-green" class="led"></span>
-                            <span id="led-yellow" class="led inactive"></span>
-                            <span id="led-red" class="led inactive"></span>
-                        </div>
-                    </div>
-                    <div id="controls">
-                        <input type="range" id="speed-slider" min="0" max="120" value="85" aria-label="Vehicle speed control">
-                        <button id="brake" aria-label="Apply brake">Brake</button>
-                        <button id="accelerate" aria-label="Accelerate">Accelerate</button>
-                        <button id="toggle-chart" aria-label="Toggle TTC chart">Toggle TTC Chart</button>
-                    </div>
-                    <div id="ttc-chart">
-                        <h3>TTC Chart</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="info-panel">
-                <h2>Simulation Overview</h2>
-                <p>Learn how MCAS detects and responds to potential hazards in real-time.</p>
-                <div class="features">
-                    <h3>Features</h3>
-                    <ul>
-                        <li>Real-time hazard detection</li>
-                        <li>Adjustable vehicle speed</li>
-                        <li>Time-to-collision (TTC) monitoring</li>
-                        <li>Interactive controls</li>
-                    </ul>
-                </div>
-            </div>
+  <div class="container">
+    <header>
+      <h1>MCAS Hazard Detection Simulator</h1>
+      <p class="subtitle">Experience real-time threat assessment and collision avoidance technology</p>
+    </header>
+
+    <div class="game-section">
+      <div class="simulation-container">
+        <div id="game-container"></div>
+
+        <div id="hud">
+          <div class="speed-display">Speed: <span id="speed-value">85</span> km/h</div>
+          <div class="ttc-display">TTC: <span id="ttc-value">6.8</span> s</div>
+          <div class="led-indicators">
+            <span id="led-green" class="led"></span>
+            <span id="led-yellow" class="led inactive"></span>
+            <span id="led-red" class="led inactive"></span>
+          </div>
         </div>
-        <div class="instructions">
-            <h2>How to Play</h2>
-            <div class="instructions-content">
-                <div class="instruction-card">
-                    <h3><span>🚗</span>Control the Vehicle</h3>
-                    <p>Use the slider to adjust speed and buttons to brake or accelerate.</p>
-                </div>
-                <div class="instruction-card">
-                    <h3><span>⚠️</span>Monitor Hazards</h3>
-                    <p>Watch the LED indicators and TTC to avoid collisions.</p>
-                </div>
-            </div>
+
+        <div id="controls">
+          <input type="range" id="speed-slider" min="0" max="120" value="85" aria-label="Vehicle speed control">
+          <button id="brake" aria-label="Apply brake">Brake</button>
+          <button id="accelerate" aria-label="Accelerate">Accelerate</button>
+          <button id="toggle-chart" aria-label="Toggle TTC chart">Toggle TTC Chart</button>
         </div>
-        <footer>
-            <p>Developed by [MKA Ibrahim] @ www.mcas.tech | Powered by Phaser</p>
-        </footer>
+
+        <div id="ttc-chart" style="display:none;">
+          <h3>TTC Chart</h3>
+          <canvas id="ttcCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h2>Simulation Overview</h2>
+        <p>Learn how MCAS detects and responds to potential hazards in real-time.</p>
+        <div class="features">
+          <h3>Features</h3>
+          <ul>
+            <li>Real-time hazard detection</li>
+            <li>Adjustable vehicle speed</li>
+            <li>Time-to-collision (TTC) monitoring</li>
+            <li>Interactive controls</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <script src="game.js"></script>
+
+    <div class="instructions">
+      <h2>How to Play</h2>
+      <div class="instructions-content">
+        <div class="instruction-card">
+          <h3><span>🚗</span>Control the Vehicle</h3>
+          <p>Use the slider to adjust speed and buttons to brake or accelerate.</p>
+        </div>
+        <div class="instruction-card">
+          <h3><span>⚠️</span>Monitor Hazards</h3>
+          <p>Watch the LED indicators and TTC to avoid collisions.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Developed by [MKA Ibrahim] @ www.mcas.tech | Powered by Phaser</p>
+    </footer>
+  </div>
+
+  <!-- Game + Chart logic -->
+  <script src="game.js"></script>
 </body>
 </html>
-
