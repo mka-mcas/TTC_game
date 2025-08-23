@@ -1,19 +1,88 @@
-/* Add this at the top to ensure proper element sizing */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    padding: 0;
     font-family: 'Arial', sans-serif;
-    background: #0a192f;
+    background: linear-gradient(135deg, #0a192f 0%, #1a3a5f 100%);
     color: #e6f1ff;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    color: #64ffda;
+    text-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+.game-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.simulation-container {
+    flex: 1;
+    min-width: 360px;
+    max-width: 420px;
+}
+
+.info-panel {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    background: rgba(17, 34, 64, 0.8);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: left;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.info-panel h2 {
+    color: #64ffda;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.info-panel p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.features {
+    margin-top: 25px;
+}
+
+.features li {
+    margin-bottom: 10px;
+    margin-left: 20px;
 }
 
 #game-container {
@@ -22,9 +91,10 @@ body {
     height: 640px;
     background: #0a192f;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     border: 2px solid #64ffda;
+    margin: 0 auto;
 }
 
 #hud {
@@ -46,12 +116,18 @@ body {
     font-weight: bold;
 }
 
-.led-indicators img {
+.led-indicators .led {
     width: 24px;
     height: 24px;
+    border-radius: 50%;
+    display: inline-block;
     margin: 0 3px;
     transition: opacity 0.3s;
 }
+
+#led-green { background: #00ff00; }
+#led-yellow { background: #ffff00; }
+#led-red { background: #ff0000; }
 
 .inactive {
     opacity: 0.3;
@@ -89,16 +165,37 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 
 #controls button:hover {
     background: #233554;
+    transform: translateY(-2px);
 }
 
 #speed-slider {
     width: 100%;
     margin-bottom: 10px;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: #112240;
+    outline: none;
+}
+
+#speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #64ffda;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#speed-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px #64ffda;
 }
 
 #ttc-chart {
@@ -127,4 +224,77 @@ body {
     0% { opacity: 1; }
     50% { opacity: 0.3; }
     100% { opacity: 1; }
+}
+
+.instructions {
+    margin-top: 25px;
+    background: rgba(17, 34, 64, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 30px auto;
+}
+
+.instructions h2 {
+    color: #64ffda;
+    margin-bottom: 15px;
+}
+
+.instructions-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.instruction-card {
+    background: rgba(10, 25, 47, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 250px;
+    text-align: left;
+}
+
+.instruction-card h3 {
+    color: #64ffda;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.instruction-card h3 span {
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .game-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info-panel {
+        max-width: 360px;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .led-indicators .led, #controls button, #speed-slider::-webkit-slider-thumb {
+        transition: none;
+    }
+    h1 { text-shadow: none; }
+    #game-container { box-shadow: none; }
 }
