@@ -1,126 +1,166 @@
-body {
+/* Reset default margins and padding */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  color: #333;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* Body styling for full viewport */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Main container */
 .container {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   padding: 20px;
 }
 
+/* Header styling */
 header {
   text-align: center;
   margin-bottom: 20px;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 2rem;
+  font-size: 2.5em;
   color: #2c3e50;
 }
 
 .subtitle {
-  font-size: 1.1rem;
-  color: #555;
+  font-size: 1.2em;
+  color: #7f8c8d;
 }
 
+/* Game section layout */
 .game-section {
   display: flex;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
+/* Simulation container */
 .simulation-container {
-  flex: 2;
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  position: relative;
-}
-
-#game-container {
-  width: 800px;
-  height: 600px;
-  margin: auto;
-}
-
-#hud {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: rgba(255,255,255,0.9);
-  padding: 10px 15px;
+  flex: 3;
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 14px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Game canvas styling */
+.game-canvas {
+  width: 100%;
+  height: 400px; /* Fixed height for the game canvas */
+  position: relative;
+  overflow: hidden;
+}
+
+.game-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* HUD styling */
+#hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #ecf0f1;
+  border-radius: 4px;
+  margin-top: 10px;
 }
 
 .speed-display, .ttc-display {
-  margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
-.led-indicators {
-  display: flex;
-  gap: 6px;
-}
-
-.led {
-  width: 14px;
-  height: 14px;
+.led-indicators .led {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: inline-block;
-  background: green;
+  margin: 0 5px;
 }
 
-#led-yellow { background: yellow; }
-#led-red { background: red; }
-.inactive { opacity: 0.2; }
+#led-green { background-color: #2ecc71; }
+#led-yellow { background-color: #f1c40f; }
+#led-red { background-color: #e74c3c; }
+.led.inactive { opacity: 0.3; }
 
+/* Controls styling */
 #controls {
-  margin-top: 10px;
   display: flex;
-  justify-content: center;
   gap: 10px;
+  justify-content: center;
+  padding: 10px;
 }
 
-#controls input[type=range] {
+#speed-slider {
   width: 200px;
 }
 
-#controls button {
-  padding: 6px 12px;
+button {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  background: #3498db;
-  color: white;
-  font-size: 14px;
 }
 
-#controls button:hover {
-  background: #2980b9;
+button:hover {
+  background-color: #2980b9;
 }
 
+/* TTC Chart */
 #ttc-chart {
-  margin-top: 15px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
+#ttcCanvas {
+  max-width: 100%;
+  height: 200px;
+}
+
+/* Info panel */
 .info-panel {
   flex: 1;
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .info-panel h2 {
-  margin-top: 0;
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
+.features ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+/* Instructions section */
 .instructions {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .instructions-content {
@@ -130,20 +170,50 @@ header h1 {
 
 .instruction-card {
   flex: 1;
-  background: #fff;
+  background-color: #fff;
   padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .instruction-card h3 {
+  font-size: 1.2em;
   margin-bottom: 10px;
 }
 
+.instruction-card span {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+/* Footer */
 footer {
-  margin-top: 30px;
   text-align: center;
-  font-size: 0.9rem;
-  color: #777;
+  margin-top: 20px;
+  color: #7f8c8d;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-section {
+    flex-direction: column;
+  }
+
+  .simulation-container, .info-panel {
+    width: 100%;
+  }
+
+  .game-canvas {
+    height: 300px; /* Adjust height for smaller screens */
+  }
+
+  #controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #speed-slider {
+    width: 100%;
+  }
 }
