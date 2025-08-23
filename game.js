@@ -1,97 +1,136 @@
-const config = {
-    type: Phaser.AUTO,
-    width: 400,
-    height: 600,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            debug: false,
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
-};
+// MCAS Hazard Detection Simulator - Phaser + Chart.js
 
-const game = new Phaser.Game(config);
+let speed = 85; // initial speed
+let distance = 150; // starting distance to obstacle
+let braking = false;
+let accelerating = false;
+let chart; // Chart.js instance
 
-let car;
-let cursors;
-let obstacles;
-let lanes = [100, 200, 300]; // three lane x-positions
-let speed = 200;
+class MCASScene extends Phaser.Scene {
+  constructor() {
+    super({ key: 'MCASScene' });
+  }
 
-function preload() {
+  preload() {
     this.load.image('road', 'assets/road.png');
     this.load.image('car', 'assets/car.png');
     this.load.image('obstacle', 'assets/obstacle.png');
-}
+  }
 
-function create() {
-    // Road background
-    this.add.image(200, 300, 'road').setDisplaySize(400, 600);
+  create() {
+    this.road = this.add.tileSprite(400, 300, 800, 600, 'road');
 
-    // Car
-    car = this.physics.add.sprite(200, 500, 'car');
-    car.setCollideWorldBounds(true);
-    car.setScale(0.5);
+    this.car = this.add.sprite(400, 500, 'car').setScale(0.5);
+    this.obstacle = this.add.sprite(400, 150, 'obstacle').setScale(0.4);
 
-    // Obstacles group
-    obstacles = this.physics.add.group();
-
-    // Timer to add obstacles
+    // HUD update loop
     this.time.addEvent({
-        delay: 1500,
-        callback: addObstacle,
-        callbackScope: this,
-        loop: true
+      delay: 100,
+      loop: true,
+      callback: () => {
+        if (accelerating) speed = Math.min(speed + 1, 120);
+        if (braking) speed = Math.max(speed - 2, 0);
+
+        // distance decreases with speed
+        distance -= speed * 0.05;
+        if (distance < 20) distance = 20;
+
+        let ttc = distance / (speed / 3.6);
+        if (!isFinite(ttc)) ttc = 0;
+
+        updateHUD(speed, ttc);
+        updateLEDs(ttc);
+
+        if (chart) {
+          chart.data.labels.push('');
+          chart.data.datasets[0].data.push(ttc);
+          if (chart.data.labels.length > 20) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+          }
+          chart.update();
+        }
+      }
     });
 
     // Controls
-    cursors = this.input.keyboard.createCursorKeys();
-
-    // Collision check
-    this.physics.add.overlap(car, obstacles, hitObstacle, null, this);
-}
-
-function update() {
-    car.setVelocityX(0);
-    car.setVelocityY(0);
-
-    if (cursors.left.isDown) {
-        car.setVelocityX(-speed);
-    }
-    if (cursors.right.isDown) {
-        car.setVelocityX(speed);
-    }
-    if (cursors.up.isDown) {
-        car.setVelocityY(-speed);
-    }
-    if (cursors.down.isDown) {
-        car.setVelocityY(speed / 2); // braking slower
-    }
-
-    // Remove obstacles that go off screen
-    obstacles.children.iterate(function (child) {
-        if (child.y > 650) {
-            child.destroy();
-        }
+    document.getElementById('speed-slider').addEventListener('input', (e) => {
+      speed = parseInt(e.target.value);
     });
+
+    document.getElementById('brake').addEventListener('mousedown', () => { braking = true; });
+    document.getElementById('brake').addEventListener('mouseup', () => { braking = false; });
+
+    document.getElementById('accelerate').addEventListener('mousedown', () => { accelerating = true; });
+    document.getElementById('accelerate').addEventListener('mouseup', () => { accelerating = false; });
+
+    document.getElementById('toggle-chart').addEventListener('click', toggleChart);
+  }
+
+  update() {
+    this.road.tilePositionY -= speed * 0.2;
+  }
 }
 
-function addObstacle() {
-    // Pick random lane
-    let laneX = Phaser.Utils.Array.GetRandom(lanes);
-
-    let obs = obstacles.create(laneX, -50, 'obstacle');
-    obs.setVelocityY(150);
-    obs.setScale(0.5);
+// HUD Functions
+function updateHUD(speed, ttc) {
+  document.getElementById('speed-value').textContent = speed.toFixed(0);
+  document.getElementById('ttc-value').textContent = ttc.toFixed(1);
 }
 
-function hitObstacle(car, obs) {
-    this.physics.pause();
-    car.setTint(0xff0000);
-    alert("Game Over!");
+function updateLEDs(ttc) {
+  const green = document.getElementById('led-green');
+  const yellow = document.getElementById('led-yellow');
+  const red = document.getElementById('led-red');
+
+  green.classList.add('inactive');
+  yellow.classList.add('inactive');
+  red.classList.add('inactive');
+
+  if (ttc > 4) {
+    green.classList.remove('inactive');
+  } else if (ttc > 2) {
+    yellow.classList.remove('inactive');
+  } else {
+    red.classList.remove('inactive');
+  }
 }
+
+// Chart.js
+function toggleChart() {
+  const chartDiv = document.getElementById('ttc-chart');
+  chartDiv.style.display = chartDiv.style.display === 'none' ? 'block' : 'none';
+
+  if (!chart) {
+    const ctx = document.getElementById('ttcCanvas').getContext('2d');
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Time-to-Collision (s)',
+          data: [],
+          borderWidth: 2,
+          fill: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+}
+
+// Phaser config
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  parent: 'game-container',
+  scene: [MCASScene]
+};
+
+new Phaser.Game(config);
