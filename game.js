@@ -9,6 +9,15 @@ let carVelocity = 0; // Car horizontal velocity
 const CAR_SPEED = 5; // Speed of car movement left/right
 const OBSTACLE_TYPES = ['truck', 'car1', 'car2', 'van', 'suv']; // 5 obstacle types
 
+// Define custom scales for each obstacle type
+const OBSTACLE_SCALES = {
+  truck: 0.3, // Larger but scaled down more
+  car1: 0.35,
+  car2: 0.35,
+  van: 0.32,
+  suv: 0.33
+};
+
 class MCASScene extends Phaser.Scene {
   constructor() {
     super({ key: 'MCASScene' });
@@ -94,129 +103,4 @@ class MCASScene extends Phaser.Scene {
       speed = parseInt(e.target.value);
     });
 
-    document.getElementById('brake').addEventListener('mousedown', () => { braking = true; });
-    document.getElementById('brake').addEventListener('mouseup', () => { braking = false; });
-
-    document.getElementById('accelerate').addEventListener('mousedown', () => { accelerating = true; });
-    document.getElementById('accelerate').addEventListener('mouseup', () => { accelerating = false; });
-
-    document.getElementById('toggle-chart').addEventListener('click', toggleChart);
-  }
-
-  spawnObstacle() {
-    const type = Phaser.Math.RND.pick(OBSTACLE_TYPES);
-    let xPosition;
-    let velocityY = speed * 0.2; // Default downward movement
-
-    // Special case for malfunctioned truck
-    if (type === 'truck' && Phaser.Math.Between(0, 100) < 20) { // 20% chance to be stopped
-      xPosition = 150; // Left side
-      velocityY = 0; // Stopped
-    } else {
-      xPosition = Phaser.Math.Between(100, 700); // Random lane position
-    }
-
-    const obstacle = this.obstacles.create(xPosition, -50, type).setScale(0.4);
-    obstacle.setData('velocityY', velocityY);
-  }
-
-  getClosestObstacleDistance() {
-    let minDistance = 1000;
-    this.obstacles.getChildren().forEach(obstacle => {
-      const dist = obstacle.y - this.car.y;
-      if (dist > 0 && dist < minDistance) {
-        minDistance = dist;
-      }
-    });
-    return minDistance;
-  }
-
-  update() {
-    this.road.tilePositionY -= speed * 0.2;
-
-    // Handle keyboard input
-    if (this.cursors.left.isDown) {
-      carVelocity = -CAR_SPEED;
-    } else if (this.cursors.right.isDown) {
-      carVelocity = CAR_SPEED;
-    } else if (!this.input.activePointer.isDown) {
-      carVelocity *= 0.9; // Smooth deceleration
-    }
-
-    // Update car position
-    this.car.x += carVelocity;
-    this.car.x = Phaser.Math.Clamp(this.car.x, 50, 750);
-
-    // Update obstacles
-    this.obstacles.getChildren().forEach(obstacle => {
-      obstacle.y += obstacle.getData('velocityY');
-      // Remove obstacles that go off-screen
-      if (obstacle.y > 650) {
-        obstacle.destroy();
-      }
-    });
-  }
-}
-
-// HUD Functions
-function updateHUD(speed, ttc) {
-  document.getElementById('speed-value').textContent = speed.toFixed(0);
-  document.getElementById('ttc-value').textContent = ttc.toFixed(1);
-}
-
-function updateLEDs(ttc) {
-  const green = document.getElementById('led-green');
-  const yellow = document.getElementById('led-yellow');
-  const red = document.getElementById('led-red');
-
-  green.classList.add('inactive');
-  yellow.classList.add('inactive');
-  red.classList.add('inactive');
-
-  if (ttc > 4) {
-    green.classList.remove('inactive');
-  } else if (ttc > 2) {
-    yellow.classList.remove('inactive');
-  } else {
-    red.classList.remove('inactive');
-  }
-}
-
-// Chart.js
-function toggleChart() {
-  const chartDiv = document.getElementById('ttc-chart');
-  chartDiv.style.display = chartDiv.style.display === 'none' ? 'block' : 'none';
-
-  if (!chart) {
-    const ctx = document.getElementById('ttcCanvas').getContext('2d');
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Time-to-Collision (s)',
-          data: [],
-          borderWidth: 2,
-          fill: false,
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  }
-}
-
-// Phaser config
-const config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  parent: 'game-container',
-  scene: [MCASScene]
-};
-
-new Phaser.Game(config);
+    document.getElementById('
