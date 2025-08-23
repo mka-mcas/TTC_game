@@ -17,7 +17,7 @@
 
     <div class="game-section">
       <div class="simulation-container">
-        <div id="game-container"></div>
+        <div id="game-container" class="game-canvas"></div>
 
         <div id="hud">
           <div class="speed-display">Speed: <span id="speed-value">85</span> km/h</div>
@@ -36,7 +36,7 @@
           <button id="toggle-chart" aria-label="Toggle TTC chart">Toggle TTC Chart</button>
         </div>
 
-        <div id="ttc-chart" style="display:none;">
+        <div id="ttc-chart" style="display: none;">
           <h3>TTC Chart</h3>
           <canvas id="ttcCanvas"></canvas>
         </div>
@@ -76,7 +76,6 @@
     </footer>
   </div>
 
-  <!-- Game + Chart logic -->
   <script src="game.js"></script>
 </body>
 </html>
