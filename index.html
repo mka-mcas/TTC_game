@@ -3,66 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCAS Hazard Detection Simulator</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 10px;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #game-container {
-      border: 2px solid #333;
-    }
-    #controls, #hud, #leds {
-      margin: 10px 0;
-    }
-    #led-green, #led-yellow, #led-red {
-      width: 20px;
-      height: 20px;
-      display: inline-block;
-      margin: 0 5px;
-      border-radius: 50%;
-    }
-    #led-green { background: green; }
-    #led-yellow { background: yellow; }
-    #led-red { background: red; }
-    .inactive { opacity: 0.3; }
-    #ttc-chart {
-      display: none;
-      max-width: 400px;
-    }
-    button {
-      padding: 5px 10px;
-      margin: 0 5px;
-    }
-  </style>
+  <title>MCAS — Hazard Detection Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="game-container"></div>
-  <div id="controls">
-    <input type="range" id="speed-slider" min="0" max="120" value="85">
-    <button id="brake">Brake</button>
-    <button id="accelerate">Accelerate</button>
-    <button id="toggle-chart">Toggle Chart</button>
-  </div>
-  <div id="hud">
-    Speed: <span id="speed-value">85</span> km/h |
-    TTC: <span id="ttc-value">0.0</span> s
-  </div>
-  <div id="leds">
-    <div id="led-green" class="inactive"></div>
-    <div id="led-yellow" class="inactive"></div>
-    <div id="led-red" class="inactive"></div>
-  </div>
-  <div id="ttc-chart">
-    <canvas id="ttcCanvas"></canvas>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <div class="logo-badge">MCAS</div>
+      <div class="header-titles">
+        <h1>Hazard Detection Simulator</h1>
+        <p class="subtitle">Mobile Collision Avoidance System · v2.4.1</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot active"></span>
+      <span id="system-status">SYSTEM ONLINE</span>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main>
+
+    <!-- Left instrument panel -->
+    <aside class="panel panel-left">
+      <div class="instrument-group">
+        <div class="instrument-label">VEHICLE SPEED</div>
+        <div class="speedometer">
+          <canvas id="speedCanvas" width="180" height="180"></canvas>
+          <div class="speed-overlay">
+            <span id="speed-value">85</span>
+            <span class="unit">km/h</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="instrument-group">
+        <div class="instrument-label">TIME TO COLLISION</div>
+        <div class="ttc-display">
+          <span id="ttc-value">—</span>
+          <span class="unit">sec</span>
+        </div>
+        <div class="ttc-bar-wrap">
+          <div id="ttc-bar" class="ttc-bar safe"></div>
+        </div>
+      </div>
+
+      <div class="instrument-group">
+        <div class="instrument-label">ALERT LEVEL</div>
+        <div class="leds">
+          <div class="led-item">
+            <div id="led-green" class="led led-green inactive"></div>
+            <span>CLEAR</span>
+          </div>
+          <div class="led-item">
+            <div id="led-yellow" class="led led-yellow inactive"></div>
+            <span>CAUTION</span>
+          </div>
+          <div class="led-item">
+            <div id="led-red" class="led led-red inactive"></div>
+            <span>DANGER</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="instrument-group">
+        <div class="instrument-label">SESSION STATS</div>
+        <div class="stats-grid">
+          <div class="stat-row"><span>DISTANCE</span><span id="stat-distance">0 m</span></div>
+          <div class="stat-row"><span>HAZARDS</span><span id="stat-hazards">0</span></div>
+          <div class="stat-row"><span>COLLISIONS</span><span id="stat-collisions">0</span></div>
+          <div class="stat-row"><span>SCORE</span><span id="stat-score">0</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Game viewport -->
+    <section class="viewport-section">
+      <div class="viewport-frame">
+        <div class="scanlines"></div>
+        <div id="game-container"></div>
+        <div id="collision-flash"></div>
+        <div class="lane-indicator">
+          <div class="lane-pip" id="lane-0"></div>
+          <div class="lane-pip active" id="lane-1"></div>
+          <div class="lane-pip" id="lane-2"></div>
+        </div>
+        <div id="alert-banner" class="alert-banner hidden">⚠ COLLISION IMMINENT</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-bar">
+        <div class="control-group">
+          <label class="ctrl-label">THROTTLE</label>
+          <div class="slider-wrap">
+            <input type="range" id="speed-slider" min="0" max="120" value="85">
+            <div class="slider-ticks">
+              <span>0</span><span>30</span><span>60</span><span>90</span><span>120</span>
+            </div>
+          </div>
+        </div>
+        <div class="control-group buttons-group">
+          <button id="brake" class="btn btn-brake">
+            <span class="btn-icon">◀◀</span> BRAKE
+          </button>
+          <button id="accelerate" class="btn btn-accel">
+            ACCEL <span class="btn-icon">▶▶</span>
+          </button>
+          <button id="btn-left" class="btn btn-lane">◄ LANE</button>
+          <button id="btn-right" class="btn btn-lane">LANE ►</button>
+        </div>
+        <div class="control-group">
+          <div class="key-hints">
+            <span>← → Lane Switch</span>
+            <span>↑ ↓ Speed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right panel: chart -->
+    <aside class="panel panel-right">
+      <div class="instrument-group" style="flex:1">
+        <div class="instrument-label">TTC HISTORY</div>
+        <div class="chart-wrap">
+          <canvas id="ttcCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="instrument-group">
+        <div class="instrument-label">EVENT LOG</div>
+        <div id="event-log" class="event-log"></div>
+      </div>
+
+      <div class="instrument-group">
+        <div class="instrument-label">SENSOR STATUS</div>
+        <div class="sensor-grid">
+          <div class="sensor-item">
+            <div class="sensor-icon">📡</div>
+            <div class="sensor-info">
+              <span>RADAR</span>
+              <span class="sensor-ok">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-item">
+            <div class="sensor-icon">📷</div>
+            <div class="sensor-info">
+              <span>CAMERA</span>
+              <span class="sensor-ok">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-item">
+            <div class="sensor-icon">🔊</div>
+            <div class="sensor-info">
+              <span>ULTRASONIC</span>
+              <span class="sensor-ok">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-item">
+            <div class="sensor-icon">🛰</div>
+            <div class="sensor-info">
+              <span>GPS</span>
+              <span class="sensor-ok">LOCK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="game.js"></script>
 </body>
