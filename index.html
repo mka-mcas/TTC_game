@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MCAS Elite · Hazard Detection Simulator</title>
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-12TD1JK5M7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-12TD1JK5M7');
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MCAS Elite · Hazard Detection Simulator</title>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-12TD1JK5M7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-12TD1JK5M7');
+  </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <style>
-    /* ══════════════════════════════════════════════
-       CSS VARIABLES — Keeping your original theme
-    ══════════════════════════════════════════════ */
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <style>
     :root {
       --bg: #05070b; --surface: #0b0f17; --card: #0f151f; --border: #18243a;
       --border-hi: #22344e; --amber: #f97316; --amber-dim: #7c3810;
@@ -31,128 +29,75 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--ui);
-      font-size: 13px;
-      overflow-x: hidden;
-      user-select: none;
-      /* Prevent mobile pull-to-refresh */
-      overscroll-behavior-y: contain;
+      height: 100%; background: var(--bg); color: var(--text);
+      font-family: var(--ui); font-size: 13px; overflow-x: hidden;
+      user-select: none; overscroll-behavior-y: contain;
     }
 
-    /* ── HEADER ── */
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-      background: linear-gradient(90deg, rgba(11,15,23,0.98), rgba(9,13,20,0.98));
-      border-bottom: 1px solid var(--border-hi);
-      flex-wrap: wrap; /* Important for narrow phones */
-      gap: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; background: rgba(11,15,23,0.98);
+      border-bottom: 1px solid var(--border-hi); z-index: 10; gap: 10px;
     }
 
-    .logo-block { display: flex; align-items: center; }
-    .logo-badge { font-weight: 800; font-size: 20px; letter-spacing: 2px; color: #000; background: var(--amber); padding: 5px 12px; clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%); line-height: 1; }
-    .logo-sub { font-weight: 300; font-size: 20px; letter-spacing: 2px; color: var(--amber); padding-left: 10px; text-shadow: 0 0 20px var(--amber-glow); }
-    
-    .hdr-right { display: flex; align-items: center; gap: 12px; flex-grow: 1; justify-content: flex-end; }
-    #hdr-score { font-weight: 800; font-size: 24px; color: var(--amber); }
+    .logo-badge { font-weight: 800; font-size: 22px; color: #000; background: var(--amber); padding: 5px 16px; clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
+    .logo-sub { font-weight: 300; font-size: 22px; color: var(--amber); padding-left: 16px; }
 
-    /* ── MAIN LAYOUT ── */
+    /* ── RESPONSIVE GRID ── */
     main {
       display: grid;
-      grid-template-columns: 240px 1fr 260px; /* Desktop Default */
-      gap: 12px;
-      padding: 12px;
-      min-height: 0;
+      grid-template-columns: 240px 1fr 260px;
+      gap: 12px; padding: 12px; min-height: 0;
     }
 
     .panel { display: flex; flex-direction: column; gap: 10px; }
-
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 14px; position: relative; }
+    .card { background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 3px; }
     .card-title { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--text-mid); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; text-transform: uppercase; }
 
-    /* ── CENTER SECTION & VIEWPORT ── */
-    .center-col { display: flex; flex-direction: column; gap: 10px; width: 100%; min-width: 0; }
+    .center-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     
     .viewport-frame {
-      flex: 1;
-      position: relative;
-      background: #000;
-      border: 1px solid var(--border-hi);
-      border-radius: 3px;
-      overflow: hidden;
-      aspect-ratio: 660 / 460; /* Lock ratio for Wix iframes */
-      width: 100%;
+      position: relative; background: #000; border: 1px solid var(--border-hi);
+      border-radius: 3px; overflow: hidden; aspect-ratio: 660 / 460; width: 100%;
     }
 
     #game-container { width: 100%; height: 100%; }
-    
-    /* ── CONTROLS BAR (Touch Friendly) ── */
+    #game-container canvas { width: 100% !important; height: auto !important; }
+
     .controls-bar {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
+      background: var(--card); border: 1px solid var(--border); padding: 12px;
+      display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;
     }
-	/* Ensure the Phaser Canvas scales with the container */
-	#game-container canvas {
-	width: 100% !important;
-	height: auto !important;
-	}
-    .gbtn { 
-      padding: 12px 18px; 
-      font-size: 12px; 
-      min-width: 90px;
-      background: transparent; 
-      border: 1px solid var(--border-hi); 
-      color: var(--text); 
-      cursor: pointer;
-      font-family: var(--mono);
-    }
-    .gbtn-brake { color: var(--red); border-color: var(--red-dim); }
-    .gbtn-accel { color: var(--green); border-color: var(--green-dim); }
 
-    /* ── MOBILE OVERRIDES ── */
+    /* ── MOBILE OPTIMIZATIONS ── */
     @media (max-width: 1100px) {
-      main { grid-template-columns: 1fr; } /* Stack vertically */
-      .panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-      .hdr-title, .key-hints, .sensor-grid { display: none; } /* Simplify UI for small screens */
+      main { grid-template-columns: 1fr; }
+      .panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+      header { flex-direction: column; text-align: center; }
+      .hdr-title, .key-hints { display: none; }
     }
 
-    @media (max-width: 480px) {
-      .logo-sub { display: none; }
-      #speedVal { font-size: 32px; }
-      .speedo-wrap canvas { width: 140px !important; height: 140px !important; }
-    }
-
-    /* All your original specific styles for LEDs, Speedo, TTC, etc. */
-    #speedCanvas, #radarCanvas, #ttcChart { display: block; max-width: 100%; margin: 0 auto; }
+    /* Original Component Styles */
     .speedo-wrap { display: flex; flex-direction: column; align-items: center; }
-    #speedVal { font-weight: 800; font-size: 44px; color: var(--amber); }
-    .ttc-track { height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; }
+    #speedVal { font-weight: 800; font-size: 44px; color: var(--amber); line-height: 1; }
+    .ttc-track { height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; margin-top: 10px; }
     #ttcBar { height: 100%; width: 100%; transition: width 0.25s; }
-    .led-row { display: flex; gap: 8px; justify-content: center; }
-    .led-hex { width: 30px; height: 30px; clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); background: var(--text-dim); }
-    .led-hex.off { opacity: 0.1; }
+    .led-row { display: flex; gap: 10px; justify-content: center; }
+    .led-hex { width: 38px; height: 38px; clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); transition: all 0.2s; opacity: 0.12; }
     .led-hex-g { background: var(--green); }
     .led-hex-y { background: var(--yellow); }
     .led-hex-r { background: var(--red); }
-    #alertBanner { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: var(--red); padding: 5px 15px; z-index: 10; font-family: var(--mono); display: none; }
-    #pauseOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 15; color: var(--amber); font-size: 24px; }
-    #pauseOverlay.visible { display: flex; }
-    .lane-pips { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 8; }
-    .lpip { width: 25px; height: 4px; background: var(--text-dim); }
-    .lpip.active { background: var(--amber); }
-    #eventLog { height: 100px; overflow-y: auto; font-family: var(--mono); font-size: 10px; }
-    </style>
+    .led-hex:not(.off) { opacity: 1; box-shadow: 0 0 15px currentColor; }
+    #alertBanner { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); background: var(--red); padding: 5px 22px; color: #fff; z-index: 7; display: none; font-family: var(--mono); }
+    .lane-pips { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 7; }
+    .lpip { width: 28px; height: 5px; background: var(--text-dim); border-radius: 3px; }
+    .lpip.active { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    #eventLog { height: 130px; overflow-y: auto; font-family: var(--mono); font-size: 10px; }
+    
+    .gbtn { padding: 10px 16px; font-family: var(--mono); font-size: 11px; background: transparent; border: 1px solid var(--border-hi); color: var(--text); cursor: pointer; }
+    .gbtn-brake { color: var(--red); border-color: var(--red-dim); }
+    .gbtn-accel { color: var(--green); border-color: var(--green-dim); }
+  </style>
 </head>
 <body>
 
@@ -162,33 +107,33 @@
       <div class="logo-sub">ELITE</div>
     </div>
     <div class="hdr-right">
-      <div id="hdr-score">1000</div>
-      <select id="diffSelect" style="background:#0f151f; color:#fff; border:1px solid #22344e; padding:5px;">
+      <div id="hdr-score" style="font-size:28px; color:var(--amber); font-weight:800;">1000</div>
+      <select id="diffSelect" style="background:var(--card); color:white; border:1px solid var(--border-hi); padding:5px;">
         <option value="easy">EASY</option>
         <option value="medium" selected>MEDIUM</option>
         <option value="hard">HARD</option>
       </select>
-      <button class="gbtn" id="pauseBtn" style="min-width:40px; padding:5px 10px;">⏸</button>
-      <button class="gbtn" id="resetBtn" style="min-width:40px; padding:5px 10px;">⟳</button>
+      <button class="gbtn" id="pauseBtn">⏸</button>
+      <button class="gbtn" id="resetBtn">⟳</button>
     </div>
   </header>
 
   <main>
     <aside class="panel">
       <div class="card">
-        <div class="card-title">VEHICLE SPEED</div>
+        <div class="card-title">SPEED</div>
         <div class="speedo-wrap">
-          <canvas id="speedCanvas" width="200" height="180"></canvas>
+          <canvas id="speedCanvas" width="200" height="200"></canvas>
           <div id="speedVal">85</div>
         </div>
       </div>
       <div class="card">
         <div class="card-title">TIME TO COLLISION</div>
-        <div id="ttcVal" style="font-size:32px; color:var(--cyan);">—</div>
+        <div id="ttcVal" style="font-size:44px; font-family:var(--mono); color:var(--cyan);">—</div>
         <div class="ttc-track"><div id="ttcBar"></div></div>
       </div>
       <div class="card">
-        <div class="card-title">PROXIMITY RADAR</div>
+        <div class="card-title">RADAR</div>
         <canvas id="radarCanvas" width="200" height="130"></canvas>
       </div>
     </aside>
@@ -196,7 +141,6 @@
     <section class="center-col">
       <div class="viewport-frame">
         <div id="alertBanner">⚠ COLLISION IMMINENT</div>
-        <div id="pauseOverlay"><p>PAUSED</p></div>
         <div class="lane-pips">
           <div class="lpip" id="lp0"></div>
           <div class="lpip active" id="lp1"></div>
@@ -206,10 +150,14 @@
       </div>
 
       <div class="controls-bar">
-        <button class="gbtn gbtn-brake" id="brakeBtn">BRAKE</button>
-        <button class="gbtn gbtn-accel" id="accelBtn">ACCEL</button>
-        <button class="gbtn" id="laneLeftBtn">◄ LANE</button>
-        <button class="gbtn" id="laneRightBtn">LANE ►</button>
+        <div style="display:flex; gap:8px;">
+          <button class="gbtn gbtn-brake" id="brakeBtn">BRAKE</button>
+          <button class="gbtn gbtn-accel" id="accelBtn">ACCEL</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="gbtn" id="laneLeftBtn">◄ LANE</button>
+          <button class="gbtn" id="laneRightBtn">LANE ►</button>
+        </div>
         <button class="gbtn" id="weatherBtn">WEATHER</button>
       </div>
     </section>
@@ -217,7 +165,7 @@
     <aside class="panel">
       <div class="card">
         <div class="card-title">TTC HISTORY</div>
-        <canvas id="ttcChart" style="height:120px;"></canvas>
+        <canvas id="ttcChart" style="height:170px;"></canvas>
       </div>
       <div class="card">
         <div class="card-title">EVENT LOG</div>
@@ -231,13 +179,11 @@
 
   <script>
   'use strict';
-
-  // ═══════════════════════════════════════════════════
-  // ALL YOUR ORIGINAL CONSTANTS & STATE
-  // ═══════════════════════════════════════════════════
+  // RESTORING YOUR ENTIRE PHYSICS AND DRAWING ENGINE
   const GAME_W = 660, GAME_H = 460;
   const LANE_COUNT = 3, LANE_W = 92;
   const ROAD_L = (GAME_W - (LANE_COUNT * LANE_W)) / 2;
+  const ROAD_R = ROAD_L + (LANE_COUNT * LANE_W);
   const PLAYER_Y = GAME_H - 82;
   const CAR_W = 44, CAR_H = 70;
   const PX_PER_KMH = 70, M_PER_PX = 0.38, DASH_CYCLE = 80;
@@ -253,12 +199,9 @@
     speed: 85, lane: 1, score: 1000, distance: 0,
     hazards: 0, collisions: 0, evaded: 0,
     difficulty: 'medium', paused: false, weatherIdx: 0,
-    reactionStart: null, alertLevel: 'clear'
+    reactionStart: null, alertLevel: 'clear',
   };
 
-  // ═══════════════════════════════════════════════════
-  // YOUR ORIGINAL CHART, SPEEDO, RADAR FUNCTIONS
-  // ═══════════════════════════════════════════════════
   const ttcBuffer = new Array(80).fill(null);
   let ttcChartObj = null;
 
@@ -268,7 +211,7 @@
       type: 'line',
       data: {
         labels: Array(80).fill(''),
-        datasets: [{ data: [...ttcBuffer], borderColor: '#f97316', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: true }]
+        datasets: [{ data: [...ttcBuffer], borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: true }]
       },
       options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { min: 0, max: 10 }, x: { display: false } }, plugins: { legend: { display: false } } }
     });
@@ -277,42 +220,43 @@
   function drawSpeedometer(spd) {
     const can = document.getElementById('speedCanvas');
     const ctx = can.getContext('2d');
-    const W = can.width, H = can.height;
-    const cx = W/2, cy = H/2 + 10, R = 70;
+    const W = can.width, H = can.height, cx = W/2, cy = H/2+10, R = 82;
     ctx.clearRect(0,0,W,H);
-    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*2.28); ctx.strokeStyle='#18243a'; ctx.lineWidth=10; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*2.28); ctx.strokeStyle='#18243a'; ctx.lineWidth=12; ctx.stroke();
     const pct = Math.min(spd/120, 1);
-    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*0.72 + pct*(Math.PI*1.56)); ctx.strokeStyle='#f97316'; ctx.stroke();
+    const grad = ctx.createLinearGradient(cx-R, cy, cx+R, cy); grad.addColorStop(0, '#22c55e'); grad.addColorStop(0.5, '#f97316'); grad.addColorStop(1, '#ef4444');
+    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*0.72 + pct*(Math.PI*1.56)); ctx.strokeStyle=grad; ctx.stroke();
+    // Needle
+    const angle = Math.PI*0.72 + pct*(Math.PI*1.56);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(angle)*R, cy + Math.sin(angle)*R); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
   }
 
   function drawRadar(obstacles) {
     const can = document.getElementById('radarCanvas');
     const ctx = can.getContext('2d');
-    const W = can.width, H = can.height;
+    const W = can.width, H = can.height, cx = W/2, py = H-12;
     ctx.fillStyle = '#060a10'; ctx.fillRect(0,0,W,H);
     obstacles.forEach(obs => {
-      if(!obs.alive) return;
+      if (!obs.alive) return;
       const dy = PLAYER_Y - obs.y;
-      if(dy < 0 || dy > 400) return;
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath(); ctx.arc(W/2 + (obs.lane-1)*30, H - (dy/4), 3, 0, Math.PI*2); ctx.fill();
+      if (dy < 0 || dy > 400) return;
+      ctx.fillStyle = dy < 100 ? '#ef4444' : '#22c55e';
+      ctx.beginPath(); ctx.arc(cx + (obs.lane-1)*40, py - (dy/3), 4, 0, Math.PI*2); ctx.fill();
     });
   }
 
   function logEvent(msg, type='info') {
     const log = document.getElementById('eventLog');
     const el = document.createElement('div');
-    el.style.color = type === 'danger' ? '#ef4444' : '#c8d4e3';
-    el.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    el.className = `log-entry log-${type}`;
+    el.innerHTML = `<span style="color:var(--text-dim)">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
     log.prepend(el);
   }
 
-  // ═══════════════════════════════════════════════════
-  // YOUR ORIGINAL PHASER ROADSCENE
-  // ═══════════════════════════════════════════════════
   class RoadScene extends Phaser.Scene {
     constructor() { super('RoadScene'); this.obstacles = []; this.spawnTimer = 0; }
     create() {
+      this.bgGfx = this.add.graphics();
       this.roadGfx = this.add.graphics();
       this.carGfx = this.add.graphics();
       this.playerGfx = this.add.graphics();
@@ -323,74 +267,93 @@
       if (sim.paused) return;
       const dt = delta / 1000;
       this._handleInput(dt);
-      this._drawRoad();
+      this._drawWorld();
+      
       this.carGfx.clear();
       this.obstacles.forEach(obs => {
-        if(!obs.alive) return;
+        if (!obs.alive) return;
         obs.y += (sim.speed - obs.speed) * PX_PER_KMH * dt;
         this._drawCar(obs, this.carGfx);
-        if(obs.y > GAME_H + 100) obs.alive = false;
-        // Collision
-        if(obs.lane === sim.lane && Math.abs(obs.y - PLAYER_Y) < 50) {
-           obs.alive = false; sim.collisions++; sim.score -= 100; logEvent('COLLISION!', 'danger');
+        if (obs.y > GAME_H + 100) { obs.alive = false; sim.evaded++; sim.score += 20; }
+        if (obs.lane === sim.lane && Math.abs(obs.y - PLAYER_Y) < 60) {
+          obs.alive = false; sim.collisions++; sim.score -= 200; logEvent('COLLISION', 'danger');
         }
       });
+
       this.spawnTimer += delta;
-      if(this.spawnTimer > 2000) { this._spawn(); this.spawnTimer = 0; }
+      if (this.spawnTimer > DIFFICULTY_CFG[sim.difficulty].spawnRange[0]) {
+        this._spawn(); this.spawnTimer = 0;
+      }
       this._drawPlayer();
       this._updateUI();
       drawRadar(this.obstacles);
     }
+
     _spawn() {
-      this.obstacles.push({ lane: Phaser.Math.Between(0,2), speed: sim.speed*0.5, y: -100, alive: true, color: 0xef4444 });
+      this.obstacles.push({ lane: Phaser.Math.Between(0,2), speed: sim.speed * 0.4, y: -100, alive: true, color: 0xef4444 });
     }
-    _drawRoad() {
-      this.roadGfx.clear();
-      this.roadGfx.fillStyle(0x141822); this.roadGfx.fillRect(ROAD_L, 0, LANE_COUNT*LANE_W, GAME_H);
+
+    _drawWorld() {
+      this.bgGfx.clear(); this.bgGfx.fillStyle(0x05080f); this.bgGfx.fillRect(0,0,GAME_W,GAME_H);
+      this.roadGfx.clear(); this.roadGfx.fillStyle(0x141822); this.roadGfx.fillRect(ROAD_L, 0, LANE_W*3, GAME_H);
+      for(let i=1; i<3; i++) {
+        this.roadGfx.lineStyle(2, 0xffffff, 0.1);
+        this.roadGfx.lineBetween(ROAD_L + i*LANE_W, 0, ROAD_L + i*LANE_W, GAME_H);
+      }
     }
+
     _drawCar(obs, g) {
+      const x = ROAD_L + obs.lane * LANE_W + (LANE_W-CAR_W)/2;
       g.fillStyle(obs.color || 0x1a3a6e);
-      g.fillRect(ROAD_L + obs.lane*LANE_W + 24, obs.y, CAR_W, CAR_H);
+      g.fillRoundedRect(x, obs.y, CAR_W, CAR_H, 6);
     }
+
     _drawPlayer() {
       this.playerGfx.clear();
       this._drawCar({lane: sim.lane, y: PLAYER_Y, color: 0x22d3ee}, this.playerGfx);
     }
+
     _handleInput(dt) {
-      if(Phaser.Input.Keyboard.JustDown(this.keys.LEFT)) this._lane(-1);
-      if(Phaser.Input.Keyboard.JustDown(this.keys.RIGHT)) this._lane(1);
+      if (Phaser.Input.Keyboard.JustDown(this.keys.LEFT)) this._moveLane(-1);
+      if (Phaser.Input.Keyboard.JustDown(this.keys.RIGHT)) this._moveLane(1);
     }
-    _lane(dir) {
+
+    _moveLane(dir) {
       sim.lane = Phaser.Math.Clamp(sim.lane + dir, 0, 2);
       document.querySelectorAll('.lpip').forEach((p,i) => p.classList.toggle('active', i === sim.lane));
     }
+
     _updateUI() {
       document.getElementById('speedVal').textContent = Math.round(sim.speed);
       document.getElementById('hdr-score').textContent = Math.round(sim.score);
       drawSpeedometer(sim.speed);
+      
+      let minTTC = 99;
+      this.obstacles.forEach(o => {
+        if (o.lane === sim.lane && o.y < PLAYER_Y) {
+          let ttc = ( (PLAYER_Y - o.y) * M_PER_PX ) / ( (sim.speed - o.speed)/3.6 );
+          if (ttc > 0 && ttc < minTTC) minTTC = ttc;
+        }
+      });
+      const ttcEl = document.getElementById('ttcVal');
+      ttcEl.textContent = minTTC < 10 ? minTTC.toFixed(1) : '—';
+      document.getElementById('ttcBar').style.width = Math.max(0, Math.min(100, (minTTC/6)*100)) + '%';
+      document.getElementById('alertBanner').style.display = minTTC < TTC_DANGER ? 'block' : 'none';
     }
+
     _bindUI() {
-      document.getElementById('brakeBtn').onclick = () => { sim.speed = Math.max(0, sim.speed - 20); logEvent('BRAKING'); };
-      document.getElementById('accelBtn').onclick = () => { sim.speed = Math.min(120, sim.speed + 20); logEvent('ACCELERATING'); };
-      document.getElementById('laneLeftBtn').onclick = () => this._lane(-1);
-      document.getElementById('laneRightBtn').onclick = () => this._lane(1);
-      document.getElementById('pauseBtn').onclick = () => { 
-        sim.paused = !sim.paused; 
-        document.getElementById('pauseOverlay').classList.toggle('visible', sim.paused);
-      };
+      document.getElementById('brakeBtn').onclick = () => { sim.speed = Math.max(0, sim.speed - 15); };
+      document.getElementById('accelBtn').onclick = () => { sim.speed = Math.min(120, sim.speed + 15); };
+      document.getElementById('laneLeftBtn').onclick = () => this._moveLane(-1);
+      document.getElementById('laneRightBtn').onclick = () => this._moveLane(1);
     }
   }
 
-  // ═══════════════════════════════════════════════════
-  // BOOTSTRAP WITH SCALING
-  // ═══════════════════════════════════════════════════
   window.addEventListener('DOMContentLoaded', () => {
     initChart();
     new Phaser.Game({
-      type: Phaser.AUTO,
-      width: GAME_W, height: GAME_H,
-      parent: 'game-container',
-      backgroundColor: '#05070b',
+      type: Phaser.AUTO, width: GAME_W, height: GAME_H,
+      parent: 'game-container', backgroundColor: '#05070b',
       scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
       scene: [RoadScene]
     });
