@@ -67,7 +67,7 @@
       grid-template-columns: 240px 1fr 260px; /* Desktop Default */
       gap: 12px;
       padding: 12px;
-      min-height: calc(100vh - 60px);
+      min-height: 0;
     }
 
     .panel { display: flex; flex-direction: column; gap: 10px; }
@@ -102,7 +102,11 @@
       gap: 12px;
       justify-content: center;
     }
-
+	/* Ensure the Phaser Canvas scales with the container */
+	#game-container canvas {
+	width: 100% !important;
+	height: auto !important;
+	}
     .gbtn { 
       padding: 12px 18px; 
       font-size: 12px; 
