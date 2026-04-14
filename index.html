@@ -1,146 +1,894 @@
 <!DOCTYPE html>
 <html lang="en">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-12TD1JK5M7');
+</script>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>MCAS Elite · Hazard Detection Simulator</title>
-  
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-12TD1JK5M7"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-12TD1JK5M7');
-  </script>
-
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  
   <style>
+    /* ══════════════════════════════════════════════
+       CSS VARIABLES — Warm Amber / Industrial Night
+    ══════════════════════════════════════════════ */
     :root {
-      --bg: #05070b; --surface: #0b0f17; --card: #0f151f; --border: #18243a;
-      --border-hi: #22344e; --amber: #f97316; --amber-dim: #7c3810;
-      --amber-glow: rgba(249,115,22,0.18); --green: #22c55e; --green-dim: #14532d;
-      --yellow: #eab308; --yellow-dim: #713f12; --red: #ef4444; --red-dim: #7f1d1d;
-      --red-glow: rgba(239,68,68,0.2); --cyan: #22d3ee; --text: #c8d4e3;
-      --text-mid: #52677e; --text-dim: #1e2d3d; --mono: 'Share Tech Mono', monospace;
-      --ui: 'Oxanium', sans-serif;
+      --bg:           #05070b;
+      --surface:      #0b0f17;
+      --card:         #0f151f;
+      --border:       #18243a;
+      --border-hi:    #22344e;
+      --amber:        #f97316;
+      --amber-dim:    #7c3810;
+      --amber-glow:   rgba(249,115,22,0.18);
+      --green:        #22c55e;
+      --green-dim:    #14532d;
+      --yellow:       #eab308;
+      --yellow-dim:   #713f12;
+      --red:          #ef4444;
+      --red-dim:      #7f1d1d;
+      --red-glow:     rgba(239,68,68,0.2);
+      --cyan:         #22d3ee;
+      --text:         #c8d4e3;
+      --text-mid:     #52677e;
+      --text-dim:     #1e2d3d;
+      --mono:         'Share Tech Mono', monospace;
+      --ui:           'Oxanium', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      height: 100%; background: var(--bg); color: var(--text);
-      font-family: var(--ui); font-size: 13px; overflow-x: hidden;
-      user-select: none; overscroll-behavior-y: contain;
+      height: 100%;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249,115,22,0.04) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(18,36,58,0.25) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(18,36,58,0.15) 40px);
+      color: var(--text);
+      font-family: var(--ui);
+      font-size: 13px;
+      overflow-x: hidden;
+      user-select: none;
     }
 
+    /* ── HEADER ─────────────────────────────────── */
     header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 20px; background: rgba(11,15,23,0.98);
-      border-bottom: 1px solid var(--border-hi); z-index: 10; gap: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, rgba(11,15,23,0.98), rgba(9,13,20,0.98));
+      border-bottom: 1px solid var(--border-hi);
+      position: relative;
+      z-index: 10;
     }
 
-    .logo-badge { font-weight: 800; font-size: 22px; color: #000; background: var(--amber); padding: 5px 16px; clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
-    .logo-sub { font-weight: 300; font-size: 22px; color: var(--amber); padding-left: 16px; }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--amber) 20%, var(--amber) 80%, transparent 100%);
+      opacity: 0.5;
+    }
 
-    /* ── RESPONSIVE GRID ── */
+    .hdr-left { display: flex; align-items: center; gap: 18px; }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .logo-badge {
+      font-family: var(--ui);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 4px;
+      color: #000;
+      background: var(--amber);
+      padding: 5px 16px 5px 12px;
+      clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+      text-shadow: none;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-family: var(--ui);
+      font-weight: 300;
+      font-size: 22px;
+      letter-spacing: 4px;
+      color: var(--amber);
+      padding-left: 16px;
+      text-shadow: 0 0 20px var(--amber-glow);
+    }
+
+    .hdr-title h1 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .hdr-title p {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-mid);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sys-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      padding: 6px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--green);
+    }
+
+    .sys-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: syspulse 2s infinite;
+    }
+
+    @keyframes syspulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .score-block {
+      text-align: right;
+    }
+
+    .score-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--text-mid);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    #hdr-score {
+      font-family: var(--ui);
+      font-weight: 800;
+      font-size: 28px;
+      color: var(--amber);
+      text-shadow: 0 0 20px var(--amber-glow);
+      line-height: 1;
+    }
+
+    .hdr-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hdr-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .hdr-btn:hover { color: var(--amber); border-color: var(--amber-dim); background: var(--amber-glow); }
+    .hdr-btn:active { transform: scale(0.97); }
+    .hdr-btn.paused { color: var(--yellow); border-color: var(--yellow-dim); }
+
+    select#diffSelect {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    select#diffSelect:focus { border-color: var(--amber-dim); }
+
+    /* ── MAIN LAYOUT ────────────────────────────── */
     main {
       display: grid;
       grid-template-columns: 240px 1fr 260px;
-      gap: 12px; padding: 12px; min-height: 0;
+      gap: 12px;
+      padding: 12px;
+      height: calc(100vh - 58px);
+      min-height: 540px;
     }
 
-    .panel { display: flex; flex-direction: column; gap: 10px; }
-    .card { background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 3px; }
-    .card-title { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--text-mid); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; text-transform: uppercase; }
-
-    .center-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-    
-    .viewport-frame {
-      position: relative; background: #000; border: 1px solid var(--border-hi);
-      border-radius: 3px; overflow: hidden; aspect-ratio: 660 / 460; width: 100%;
+    /* ── PANELS ─────────────────────────────────── */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
-    #game-container { width: 100%; height: 100%; }
-    #game-container canvas { width: 100% !important; height: auto !important; }
+    .panel::-webkit-scrollbar { width: 3px; }
+    .panel::-webkit-scrollbar-track { background: transparent; }
+    .panel::-webkit-scrollbar-thumb { background: var(--border); }
 
-    .controls-bar {
-      background: var(--card); border: 1px solid var(--border); padding: 12px;
-      display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 14px;
+      position: relative;
     }
 
-    /* ── MOBILE OPTIMIZATIONS ── */
-    @media (max-width: 1100px) {
-      main { grid-template-columns: 1fr; }
-      .panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-      header { flex-direction: column; text-align: center; }
-      .hdr-title, .key-hints { display: none; }
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, transparent, var(--amber-dim), transparent);
+      opacity: 0.7;
     }
 
-    /* Original Component Styles */
-    .speedo-wrap { display: flex; flex-direction: column; align-items: center; }
-    #speedVal { font-weight: 800; font-size: 44px; color: var(--amber); line-height: 1; }
-    .ttc-track { height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; margin-top: 10px; }
-    #ttcBar { height: 100%; width: 100%; transition: width 0.25s; }
-    .led-row { display: flex; gap: 10px; justify-content: center; }
-    .led-hex { width: 38px; height: 38px; clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); transition: all 0.2s; opacity: 0.12; }
+    .card-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--amber-dim);
+    }
+
+    /* ── SPEEDOMETER ────────────────────────────── */
+    .speedo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #speedCanvas { display: block; }
+
+    .speedo-readout {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    #speedVal {
+      font-family: var(--ui);
+      font-weight: 800;
+      font-size: 44px;
+      color: var(--amber);
+      text-shadow: 0 0 24px var(--amber-glow);
+      line-height: 1;
+    }
+
+    .speedo-unit {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-mid);
+      letter-spacing: 2px;
+    }
+
+    /* ── TTC DISPLAY ────────────────────────────── */
+    .ttc-big {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    #ttcVal {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 48px;
+      color: var(--cyan);
+      text-shadow: 0 0 20px rgba(34,211,238,0.25);
+      line-height: 1;
+      min-width: 90px;
+      transition: color 0.3s;
+    }
+
+    #ttcVal.warn   { color: var(--yellow); text-shadow: 0 0 20px rgba(234,179,8,0.3); }
+    #ttcVal.danger { color: var(--red);    text-shadow: 0 0 20px rgba(239,68,68,0.4); animation: ttcflicker 0.3s infinite; }
+
+    @keyframes ttcflicker {
+      0%,100% { opacity:1; } 50% { opacity:0.6; }
+    }
+
+    .ttc-track {
+      height: 6px;
+      background: var(--surface);
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    #ttcBar {
+      height: 100%;
+      width: 100%;
+      transition: width 0.25s ease, background 0.3s;
+      border-radius: 3px;
+    }
+
+    /* ── LEDs ───────────────────────────────────── */
+    .led-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .led-cell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .led-hex {
+      width: 38px;
+      height: 38px;
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      transition: all 0.2s;
+    }
+
+    .led-hex.off { opacity: 0.12; }
+
     .led-hex-g { background: var(--green); }
+    .led-hex-g:not(.off) { box-shadow: 0 0 18px var(--green), 0 0 36px rgba(34,197,94,0.3); }
     .led-hex-y { background: var(--yellow); }
+    .led-hex-y:not(.off) { box-shadow: 0 0 18px var(--yellow), 0 0 36px rgba(234,179,8,0.3); animation: ledglow .5s infinite; }
     .led-hex-r { background: var(--red); }
-    .led-hex:not(.off) { opacity: 1; box-shadow: 0 0 15px currentColor; }
-    #alertBanner { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); background: var(--red); padding: 5px 22px; color: #fff; z-index: 7; display: none; font-family: var(--mono); }
-    .lane-pips { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 7; }
-    .lpip { width: 28px; height: 5px; background: var(--text-dim); border-radius: 3px; }
-    .lpip.active { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-    #eventLog { height: 130px; overflow-y: auto; font-family: var(--mono); font-size: 10px; }
-    
-    .gbtn { padding: 10px 16px; font-family: var(--mono); font-size: 11px; background: transparent; border: 1px solid var(--border-hi); color: var(--text); cursor: pointer; }
-    .gbtn-brake { color: var(--red); border-color: var(--red-dim); }
-    .gbtn-accel { color: var(--green); border-color: var(--green-dim); }
+    .led-hex-r:not(.off) { box-shadow: 0 0 18px var(--red), 0 0 36px var(--red-glow); animation: ledglow .35s infinite; }
+
+    @keyframes ledglow {
+      0%,100% { filter: brightness(1); }
+      50%      { filter: brightness(1.4); }
+    }
+
+    .led-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+    }
+
+    /* ── RADAR ──────────────────────────────────── */
+    #radarCanvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .radar-label-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .radar-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* ── REACTION TIME ──────────────────────────── */
+    .reaction-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #reactionVal {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--amber);
+    }
+
+    /* ── CENTER SECTION ─────────────────────────── */
+    .center-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .viewport-frame {
+      flex: 1;
+      position: relative;
+      background: #000;
+      border: 1px solid var(--border-hi);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(249,115,22,0.05), inset 0 0 80px rgba(0,0,0,0.4);
+      min-height: 380px;
+    }
+
+    /* CRT scanlines */
+    .viewport-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent 0, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Corner brackets */
+    .corner { position: absolute; width: 22px; height: 22px; z-index: 6; pointer-events: none; }
+    .corner-tl { top: 8px; left: 8px;  border-top: 2px solid var(--amber); border-left:  2px solid var(--amber); opacity: 0.6; }
+    .corner-tr { top: 8px; right: 8px; border-top: 2px solid var(--amber); border-right: 2px solid var(--amber); opacity: 0.6; }
+    .corner-bl { bottom: 8px; left: 8px;  border-bottom: 2px solid var(--amber); border-left:  2px solid var(--amber); opacity: 0.6; }
+    .corner-br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--amber); border-right: 2px solid var(--amber); opacity: 0.6; }
+
+    #game-container { position: relative; z-index: 1; }
+
+    /* Alert banner */
+    #alertBanner {
+      position: absolute;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--red);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      padding: 5px 22px;
+      z-index: 7;
+      display: none;
+      animation: bannerflash 0.35s infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes bannerflash { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Pause overlay */
+    #pauseOverlay {
+      position: absolute; inset: 0;
+      background: rgba(5,7,11,0.85);
+      z-index: 8;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    #pauseOverlay.visible { display: flex; }
+
+    #pauseOverlay p {
+      font-family: var(--ui);
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: 8px;
+      color: var(--amber);
+      text-shadow: 0 0 30px var(--amber-glow);
+    }
+
+    #pauseOverlay small {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-mid);
+      letter-spacing: 2px;
+    }
+
+    /* Collision flash DOM overlay */
+    #collisionFlash {
+      position: absolute; inset: 0;
+      background: var(--red);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    @keyframes collFlash { 0%{opacity:0.65} 100%{opacity:0} }
+
+    /* Lane pips */
+    .lane-pips {
+      position: absolute;
+      bottom: 10px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 6px;
+      z-index: 7;
+    }
+
+    .lpip {
+      width: 28px; height: 5px;
+      border-radius: 3px;
+      background: var(--text-dim);
+      transition: all 0.2s;
+    }
+
+    .lpip.active {
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+    }
+
+    /* Weather badge */
+    #weatherBadge {
+      position: absolute;
+      top: 10px; right: 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-mid);
+      z-index: 7;
+      background: rgba(5,7,11,0.7);
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── CONTROLS BAR ───────────────────────────── */
+    .controls-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-group { display: flex; flex-direction: column; gap: 5px; }
+
+    .ctrl-lbl {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 180px; height: 3px;
+      background: var(--border-hi);
+      border-radius: 2px;
+      outline: none; cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber-glow);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.25); }
+
+    .btn-row { display: flex; gap: 8px; align-items: center; }
+
+    .gbtn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 7px 14px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      background: transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .gbtn:active { transform: scale(0.95); }
+
+    .gbtn-brake { color: var(--red);    border-color: var(--red-dim);    }
+    .gbtn-brake:hover   { background: rgba(127,29,29,0.3); }
+    .gbtn-accel { color: var(--green);  border-color: var(--green-dim);  }
+    .gbtn-accel:hover   { background: rgba(20,83,45,0.3); }
+    .gbtn-lane  { color: var(--cyan);   border-color: #103a45; }
+    .gbtn-lane:hover    { background: rgba(16,58,69,0.4); }
+    .gbtn-wx    { color: var(--text-mid); border-color: var(--border); }
+    .gbtn-wx:hover      { color: var(--amber); border-color: var(--amber-dim); }
+
+    .key-hints {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      margin-left: auto;
+    }
+
+    kbd {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      padding: 1px 5px;
+      font-size: 9px;
+      color: var(--text-mid);
+      font-family: var(--mono);
+    }
+
+    /* ── RIGHT PANEL ────────────────────────────── */
+    .chart-wrap {
+      position: relative;
+      height: 170px;
+    }
+
+    #ttcChart {
+      display: block;
+      width: 100% !important;
+      height: 170px !important;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-val {
+      font-family: var(--ui);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--amber);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+    }
+
+    /* ── EVENT LOG ──────────────────────────────── */
+    #eventLog {
+      height: 130px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    #eventLog::-webkit-scrollbar { width: 3px; }
+    #eventLog::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .log-entry {
+      display: flex; gap: 8px;
+      padding: 3px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-mid);
+      opacity: 0;
+      animation: logIn 0.3s forwards;
+    }
+
+    @keyframes logIn { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:none} }
+
+    .log-ts  { color: var(--text-dim); flex-shrink: 0; }
+    .log-ok      .log-msg { color: var(--green);  }
+    .log-warn    .log-msg { color: var(--yellow); }
+    .log-danger  .log-msg { color: var(--red);    }
+    .log-info    .log-msg { color: var(--cyan);   }
+
+    /* ── SENSOR GRID ────────────────────────────── */
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .sensor-pill {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 7px 10px;
+    }
+
+    .sensor-pill-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      flex-shrink: 0;
+      animation: syspulse 2.5s infinite;
+    }
+
+    .sensor-info {
+      display: flex; flex-direction: column;
+      gap: 1px;
+      font-family: var(--mono);
+      font-size: 9px;
+    }
+
+    .sensor-name { color: var(--text-mid); letter-spacing: 1px; }
+    .sensor-stat { color: var(--green); letter-spacing: 1px; }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; }
+      .panel { flex-direction: row; flex-wrap: wrap; }
+      .card { flex: 1; min-width: 180px; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <header>
-    <div class="logo-block">
-      <div class="logo-badge">MCAS</div>
-      <div class="logo-sub">ELITE</div>
+    <div class="hdr-left">
+      <div class="logo-block">
+        <div class="logo-badge">MCAS</div>
+        <div class="logo-sub">ELITE</div>
+      </div>
+      <div class="hdr-title">
+        <h1>Hazard Detection Simulator</h1>
+        <p>Mobile Collision Avoidance System · Training Edition v3.0</p>
+      </div>
     </div>
     <div class="hdr-right">
-      <div id="hdr-score" style="font-size:28px; color:var(--amber); font-weight:800;">1000</div>
-      <select id="diffSelect" style="background:var(--card); color:white; border:1px solid var(--border-hi); padding:5px;">
+      <div class="sys-status">
+        <div class="sys-dot"></div>
+        <span id="sysStatusText">SYSTEM ONLINE</span>
+      </div>
+      <div class="score-block">
+        <span class="score-label">SAFETY SCORE</span>
+        <div id="hdr-score">1000</div>
+      </div>
+      <select id="diffSelect">
         <option value="easy">EASY</option>
         <option value="medium" selected>MEDIUM</option>
         <option value="hard">HARD</option>
       </select>
-      <button class="gbtn" id="pauseBtn">⏸</button>
-      <button class="gbtn" id="resetBtn">⟳</button>
+      <div class="hdr-controls">
+        <button class="hdr-btn" id="pauseBtn">⏸ PAUSE</button>
+        <button class="hdr-btn" id="resetBtn">⟳ RESET</button>
+      </div>
     </div>
   </header>
 
   <main>
-    <aside class="panel">
+
+    <!-- LEFT PANEL -->
+    <aside class="panel" id="leftPanel">
+
       <div class="card">
-        <div class="card-title">SPEED</div>
+        <div class="card-title">VEHICLE SPEED <span></span></div>
         <div class="speedo-wrap">
           <canvas id="speedCanvas" width="200" height="200"></canvas>
-          <div id="speedVal">85</div>
+          <div class="speedo-readout">
+            <span id="speedVal">85</span>
+            <span class="speedo-unit">km/h</span>
+          </div>
         </div>
       </div>
+
       <div class="card">
-        <div class="card-title">TIME TO COLLISION</div>
-        <div id="ttcVal" style="font-size:44px; font-family:var(--mono); color:var(--cyan);">—</div>
-        <div class="ttc-track"><div id="ttcBar"></div></div>
+        <div class="card-title">TIME TO COLLISION <span></span></div>
+        <div class="ttc-big">
+          <span id="ttcVal">—</span>
+          <span class="speedo-unit" style="font-size:11px">sec</span>
+        </div>
+        <div class="ttc-track">
+          <div id="ttcBar"></div>
+        </div>
       </div>
+
       <div class="card">
-        <div class="card-title">RADAR</div>
+        <div class="card-title">ALERT STATUS <span></span></div>
+        <div class="led-row">
+          <div class="led-cell">
+            <div class="led-hex led-hex-g off" id="ledG"></div>
+            <span class="led-label">CLEAR</span>
+          </div>
+          <div class="led-cell">
+            <div class="led-hex led-hex-y off" id="ledY"></div>
+            <span class="led-label">CAUTION</span>
+          </div>
+          <div class="led-cell">
+            <div class="led-hex led-hex-r off" id="ledR"></div>
+            <span class="led-label">DANGER</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">PROXIMITY RADAR <span></span></div>
         <canvas id="radarCanvas" width="200" height="130"></canvas>
+        <div class="radar-label-row">
+          <span class="radar-tag">L</span>
+          <span class="radar-tag">300m RANGE</span>
+          <span class="radar-tag">R</span>
+        </div>
       </div>
+
+      <div class="card">
+        <div class="card-title">REACTION TIME <span></span></div>
+        <div class="reaction-row">
+          <div>
+            <div id="reactionVal" style="font-family:var(--mono);font-size:24px;color:var(--amber)">—</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text-mid);letter-spacing:2px;margin-top:2px">MILLISECONDS</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);text-align:right;line-height:1.6">
+            BEST<br><span id="reactionBest" style="color:var(--green)">—</span>
+          </div>
+        </div>
+      </div>
+
     </aside>
 
+    <!-- CENTER COLUMN -->
     <section class="center-col">
+
       <div class="viewport-frame">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
         <div id="alertBanner">⚠ COLLISION IMMINENT</div>
+        <div id="weatherBadge">☀ CLEAR</div>
+        <div id="collisionFlash"></div>
+        <div id="pauseOverlay">
+          <p>PAUSED</p>
+          <small>PRESS P OR CLICK RESUME</small>
+        </div>
         <div class="lane-pips">
           <div class="lpip" id="lp0"></div>
           <div class="lpip active" id="lp1"></div>
@@ -150,27 +898,98 @@
       </div>
 
       <div class="controls-bar">
-        <div style="display:flex; gap:8px;">
-          <button class="gbtn gbtn-brake" id="brakeBtn">BRAKE</button>
-          <button class="gbtn gbtn-accel" id="accelBtn">ACCEL</button>
+        <div class="ctrl-group">
+          <span class="ctrl-lbl">THROTTLE</span>
+          <input type="range" id="speedSlider" min="0" max="120" value="85">
         </div>
-        <div style="display:flex; gap:8px;">
-          <button class="gbtn" id="laneLeftBtn">◄ LANE</button>
-          <button class="gbtn" id="laneRightBtn">LANE ►</button>
+        <div class="btn-row">
+          <button class="gbtn gbtn-brake" id="brakeBtn">◀◀ BRAKE</button>
+          <button class="gbtn gbtn-accel" id="accelBtn">ACCEL ▶▶</button>
         </div>
-        <button class="gbtn" id="weatherBtn">WEATHER</button>
+        <div class="btn-row">
+          <button class="gbtn gbtn-lane" id="laneLeftBtn">◄ LANE</button>
+          <button class="gbtn gbtn-lane" id="laneRightBtn">LANE ►</button>
+        </div>
+        <button class="gbtn gbtn-wx" id="weatherBtn">🌦 WEATHER</button>
+        <div class="key-hints">
+          <div><kbd>↑↓</kbd> Speed &nbsp; <kbd>←→</kbd> Lane</div>
+          <div><kbd>SPACE</kbd> E-Brake &nbsp; <kbd>P</kbd> Pause</div>
+        </div>
       </div>
+
     </section>
 
-    <aside class="panel">
+    <!-- RIGHT PANEL -->
+    <aside class="panel" id="rightPanel">
+
       <div class="card">
-        <div class="card-title">TTC HISTORY</div>
-        <canvas id="ttcChart" style="height:170px;"></canvas>
+        <div class="card-title">TTC HISTORY <span></span></div>
+        <div class="chart-wrap">
+          <canvas id="ttcChart"></canvas>
+        </div>
       </div>
+
       <div class="card">
-        <div class="card-title">EVENT LOG</div>
+        <div class="card-title">SESSION STATS <span></span></div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-val" id="statDist">0</div>
+            <div class="stat-lbl">Distance m</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="statHaz">0</div>
+            <div class="stat-lbl">Hazards</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="statColl">0</div>
+            <div class="stat-lbl">Collisions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="statEvaded">0</div>
+            <div class="stat-lbl">Evaded</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1">
+        <div class="card-title">EVENT LOG <span></span></div>
         <div id="eventLog"></div>
       </div>
+
+      <div class="card">
+        <div class="card-title">SENSOR SUITE <span></span></div>
+        <div class="sensor-grid">
+          <div class="sensor-pill">
+            <div class="sensor-pill-dot"></div>
+            <div class="sensor-info">
+              <span class="sensor-name">RADAR</span>
+              <span class="sensor-stat">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-pill">
+            <div class="sensor-pill-dot" style="animation-delay:0.4s"></div>
+            <div class="sensor-info">
+              <span class="sensor-name">LiDAR</span>
+              <span class="sensor-stat" id="lidarStat">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-pill">
+            <div class="sensor-pill-dot" style="animation-delay:0.8s"></div>
+            <div class="sensor-info">
+              <span class="sensor-name">CAMERA</span>
+              <span class="sensor-stat">ACTIVE</span>
+            </div>
+          </div>
+          <div class="sensor-pill">
+            <div class="sensor-pill-dot" style="animation-delay:1.2s"></div>
+            <div class="sensor-info">
+              <span class="sensor-name">GPS</span>
+              <span class="sensor-stat">LOCKED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </aside>
   </main>
 
@@ -179,184 +998,1013 @@
 
   <script>
   'use strict';
-  // RESTORING YOUR ENTIRE PHYSICS AND DRAWING ENGINE
-  const GAME_W = 660, GAME_H = 460;
-  const LANE_COUNT = 3, LANE_W = 92;
-  const ROAD_L = (GAME_W - (LANE_COUNT * LANE_W)) / 2;
-  const ROAD_R = ROAD_L + (LANE_COUNT * LANE_W);
-  const PLAYER_Y = GAME_H - 82;
-  const CAR_W = 44, CAR_H = 70;
-  const PX_PER_KMH = 70, M_PER_PX = 0.38, DASH_CYCLE = 80;
-  const TTC_CAUTION = 3.5, TTC_DANGER = 1.8;
+
+  /* ═══════════════════════════════════════════════════
+     GAME CONSTANTS — calibrated for real-world TTC feel
+  ═══════════════════════════════════════════════════ */
+  const GAME_W      = 660;
+  const GAME_H      = 460;
+  const LANE_COUNT  = 3;
+  const LANE_W      = 92;
+  const ROAD_W      = LANE_COUNT * LANE_W;          // 276
+  const ROAD_L      = (GAME_W - ROAD_W) / 2;        // 192
+  const ROAD_R      = ROAD_L + ROAD_W;              // 468
+  const PLAYER_Y    = GAME_H - 82;                  // 378
+  const CAR_W       = 44;
+  const CAR_H       = 70;
+  const PX_PER_KMH  = 70;   // screen pixels per second per 1 km/h
+  const M_PER_PX    = 0.38; // 1 screen pixel ≈ 0.38 real metres
+  const DASH_CYCLE  = 80;   // pixels between lane-dash repeats
+
+  const TTC_CAUTION = 3.5;
+  const TTC_DANGER  = 1.8;
 
   const DIFFICULTY_CFG = {
-    easy: { spawnRange: [2800, 4200], speedRange: [0.20, 0.50] },
+    easy:   { spawnRange: [2800, 4200], speedRange: [0.20, 0.50] },
     medium: { spawnRange: [1600, 2600], speedRange: [0.28, 0.68] },
-    hard: { spawnRange: [800, 1500], speedRange: [0.35, 0.82] },
+    hard:   { spawnRange: [800,  1500], speedRange: [0.35, 0.82] },
   };
 
+  const WEATHER_MODES = ['clear', 'rain', 'fog'];
+  const WEATHER_LABELS = { clear:'☀ CLEAR', rain:'🌧 RAIN', fog:'🌫 FOG' };
+
+  /* ═══════════════════════════════════════════════════
+     SIMULATION STATE
+  ═══════════════════════════════════════════════════ */
   let sim = {
-    speed: 85, lane: 1, score: 1000, distance: 0,
-    hazards: 0, collisions: 0, evaded: 0,
-    difficulty: 'medium', paused: false, weatherIdx: 0,
-    reactionStart: null, alertLevel: 'clear',
+    speed:         85,
+    lane:          1,
+    score:         1000,
+    distance:      0,
+    hazards:       0,
+    collisions:    0,
+    evaded:        0,
+    difficulty:    'medium',
+    paused:        false,
+    weatherIdx:    0,
+    reactionStart: null,
+    reactionBest:  null,
+    alertLevel:    'clear',
   };
 
-  const ttcBuffer = new Array(80).fill(null);
-  let ttcChartObj = null;
+  /* ═══════════════════════════════════════════════════
+     TTC CHART
+  ═══════════════════════════════════════════════════ */
+  const TTC_BUF_LEN = 80;
+  const ttcBuffer   = new Array(TTC_BUF_LEN).fill(null);
+  let   ttcChartObj = null;
 
   function initChart() {
     const ctx = document.getElementById('ttcChart').getContext('2d');
+
+    const gAmber = ctx.createLinearGradient(0, 0, 0, 160);
+    gAmber.addColorStop(0, 'rgba(249,115,22,0.3)');
+    gAmber.addColorStop(1, 'rgba(249,115,22,0.01)');
+
     ttcChartObj = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: Array(80).fill(''),
-        datasets: [{ data: [...ttcBuffer], borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: true }]
+        labels: Array(TTC_BUF_LEN).fill(''),
+        datasets: [
+          {
+            data: [...ttcBuffer],
+            borderColor: '#f97316',
+            backgroundColor: gAmber,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            data: Array(TTC_BUF_LEN).fill(TTC_DANGER),
+            borderColor: 'rgba(239,68,68,0.45)',
+            borderWidth: 1,
+            borderDash: [4, 4],
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            data: Array(TTC_BUF_LEN).fill(TTC_CAUTION),
+            borderColor: 'rgba(234,179,8,0.35)',
+            borderWidth: 1,
+            borderDash: [4, 4],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
       },
-      options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { min: 0, max: 10 }, x: { display: false } }, plugins: { legend: { display: false } } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        interaction: { mode: 'none' },
+        scales: {
+          y: {
+            min: 0, max: 10,
+            grid:  { color: 'rgba(24,36,58,0.8)', lineWidth: 1 },
+            ticks: { color: '#2d3f50', font: { family: "'Share Tech Mono'" }, stepSize: 2 },
+            border: { color: 'transparent' }
+          },
+          x: { display: false }
+        },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } }
+      }
     });
   }
 
+  function pushTTC(val) {
+    const v = (val > 0 && val < 50) ? Math.min(val, 10) : null;
+    ttcBuffer.push(v);
+    if (ttcBuffer.length > TTC_BUF_LEN) ttcBuffer.shift();
+    if (ttcChartObj) {
+      ttcChartObj.data.datasets[0].data = [...ttcBuffer];
+      ttcChartObj.update('none');
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SPEEDOMETER ARC CANVAS
+  ═══════════════════════════════════════════════════ */
   function drawSpeedometer(spd) {
     const can = document.getElementById('speedCanvas');
     const ctx = can.getContext('2d');
-    const W = can.width, H = can.height, cx = W/2, cy = H/2+10, R = 82;
-    ctx.clearRect(0,0,W,H);
-    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*2.28); ctx.strokeStyle='#18243a'; ctx.lineWidth=12; ctx.stroke();
-    const pct = Math.min(spd/120, 1);
-    const grad = ctx.createLinearGradient(cx-R, cy, cx+R, cy); grad.addColorStop(0, '#22c55e'); grad.addColorStop(0.5, '#f97316'); grad.addColorStop(1, '#ef4444');
-    ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI*0.72, Math.PI*0.72 + pct*(Math.PI*1.56)); ctx.strokeStyle=grad; ctx.stroke();
+    const W = can.width, H = can.height;
+    const cx = W / 2, cy = H / 2 + 10, R = 82;
+    ctx.clearRect(0, 0, W, H);
+
+    // Track
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, Math.PI * 0.72, Math.PI * 2.28);
+    ctx.strokeStyle = '#18243a';
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Colour zone fill
+    const pct = Math.min(spd / 120, 1);
+    const col = spd < 50 ? '#22c55e' : spd < 85 ? '#f97316' : '#ef4444';
+    const startA = Math.PI * 0.72;
+    const endA   = startA + pct * (Math.PI * 1.56);
+
+    const grad = ctx.createLinearGradient(cx - R, cy, cx + R, cy);
+    grad.addColorStop(0, '#22c55e');
+    grad.addColorStop(0.5, '#f97316');
+    grad.addColorStop(1, '#ef4444');
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, startA, endA);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Tick marks + labels
+    const maxSpd = 120;
+    const totalArc = Math.PI * 1.56;
+    for (let s = 0; s <= 12; s++) {
+      const a     = startA + (s / 12) * totalArc;
+      const major = s % 3 === 0;
+      const r1    = R - (major ? 16 : 10);
+      const r2    = R - 2;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+      ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+      ctx.strokeStyle = major ? '#22344e' : '#18243a';
+      ctx.lineWidth   = major ? 2 : 1;
+      ctx.shadowBlur  = 0;
+      ctx.stroke();
+      if (major) {
+        const lr   = R - 28;
+        const lspd = Math.round(s / 12 * maxSpd);
+        ctx.fillStyle    = '#2d3f50';
+        ctx.font         = "9px 'Share Tech Mono'";
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(lspd, cx + Math.cos(a) * lr, cy + Math.sin(a) * lr);
+      }
+    }
+
     // Needle
-    const angle = Math.PI*0.72 + pct*(Math.PI*1.56);
-    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(angle)*R, cy + Math.sin(angle)*R); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+    const needleA = startA + pct * totalArc;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(needleA) * (R - 10), cy + Math.sin(needleA) * (R - 10));
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth   = 2;
+    ctx.shadowColor = '#fff';
+    ctx.shadowBlur  = 8;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+    ctx.shadowBlur  = 0;
+
+    // Hub
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+    ctx.fillStyle   = '#f97316';
+    ctx.shadowColor = '#f97316';
+    ctx.shadowBlur  = 14;
+    ctx.fill();
+    ctx.shadowBlur  = 0;
   }
+
+  /* ═══════════════════════════════════════════════════
+     RADAR CANVAS
+  ═══════════════════════════════════════════════════ */
+  let radarAngle = 0;
 
   function drawRadar(obstacles) {
     const can = document.getElementById('radarCanvas');
     const ctx = can.getContext('2d');
-    const W = can.width, H = can.height, cx = W/2, py = H-12;
-    ctx.fillStyle = '#060a10'; ctx.fillRect(0,0,W,H);
-    obstacles.forEach(obs => {
-      if (!obs.alive) return;
-      const dy = PLAYER_Y - obs.y;
-      if (dy < 0 || dy > 400) return;
-      ctx.fillStyle = dy < 100 ? '#ef4444' : '#22c55e';
-      ctx.beginPath(); ctx.arc(cx + (obs.lane-1)*40, py - (dy/3), 4, 0, Math.PI*2); ctx.fill();
-    });
-  }
+    const W = can.width, H = can.height;
+    const cx = W / 2;
+    const py = H - 12;       // player dot Y
+    const maxRange = 400;    // game pixels shown in radar
+    const scaleX = (W - 20) / ROAD_W;
+    const scaleY = (H - 20) / maxRange;
 
-  function logEvent(msg, type='info') {
-    const log = document.getElementById('eventLog');
-    const el = document.createElement('div');
-    el.className = `log-entry log-${type}`;
-    el.innerHTML = `<span style="color:var(--text-dim)">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
-    log.prepend(el);
-  }
+    ctx.clearRect(0, 0, W, H);
 
-  class RoadScene extends Phaser.Scene {
-    constructor() { super('RoadScene'); this.obstacles = []; this.spawnTimer = 0; }
-    create() {
-      this.bgGfx = this.add.graphics();
-      this.roadGfx = this.add.graphics();
-      this.carGfx = this.add.graphics();
-      this.playerGfx = this.add.graphics();
-      this.keys = this.input.keyboard.addKeys('UP,DOWN,LEFT,RIGHT,SPACE,P');
-      this._bindUI();
+    // Background
+    ctx.fillStyle = '#060a10';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#0b1120';
+    const roadX = 10;
+    const roadW = ROAD_W * scaleX;
+    ctx.fillRect(roadX, 0, roadW, H);
+
+    // Range rings (distance markers)
+    ctx.strokeStyle = 'rgba(34,211,238,0.12)';
+    ctx.lineWidth   = 1;
+    for (let d = 100; d <= maxRange; d += 100) {
+      const ry = py - d * scaleY;
+      ctx.beginPath();
+      ctx.setLineDash([3, 5]);
+      ctx.moveTo(0, ry);
+      ctx.lineTo(W, ry);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(34,211,238,0.2)';
+      ctx.font = "8px 'Share Tech Mono'";
+      ctx.fillText(Math.round(d * M_PER_PX) + 'm', 1, ry - 2);
     }
+
+    // Lane dividers
+    for (let l = 0; l <= LANE_COUNT; l++) {
+      const lx = roadX + l * LANE_W * scaleX;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(249,115,22,0.12)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(lx, 0);
+      ctx.lineTo(lx, H);
+      ctx.stroke();
+    }
+
+    // Sweep line animation
+    radarAngle = (radarAngle + 1.5) % 360;
+    const sweepRad = (radarAngle - 90) * Math.PI / 180;
+    const sweepLen = Math.max(W, H) * 1.5;
+    const sweepGrad = ctx.createLinearGradient(cx, py, cx + Math.cos(sweepRad) * sweepLen, py + Math.sin(sweepRad) * sweepLen);
+    sweepGrad.addColorStop(0, 'rgba(249,115,22,0.35)');
+    sweepGrad.addColorStop(1, 'rgba(249,115,22,0)');
+    ctx.beginPath();
+    ctx.moveTo(cx, py);
+    ctx.lineTo(cx + Math.cos(sweepRad) * sweepLen, py + Math.sin(sweepRad) * sweepLen);
+    ctx.strokeStyle = sweepGrad;
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+
+    // Obstacle blips
+    for (const obs of obstacles) {
+      if (!obs.alive) continue;
+      const dy   = PLAYER_Y - obs.y;  // positive = ahead of player
+      if (dy < 0 || dy > maxRange) continue;
+      const bx   = roadX + (obs.lane * LANE_W + LANE_W / 2) * scaleX;
+      const by   = py - dy * scaleY;
+      const ttc  = calcObsTTC(obs);
+      const col  = ttc < TTC_DANGER ? '#ef4444' : ttc < TTC_CAUTION ? '#eab308' : '#22c55e';
+      ctx.beginPath();
+      ctx.arc(bx, by, 4, 0, Math.PI * 2);
+      ctx.fillStyle   = col;
+      ctx.shadowColor = col;
+      ctx.shadowBlur  = 8;
+      ctx.fill();
+      ctx.shadowBlur  = 0;
+    }
+
+    // Player blip
+    ctx.beginPath();
+    ctx.arc(roadX + (sim.lane * LANE_W + LANE_W / 2) * scaleX, py, 5, 0, Math.PI * 2);
+    ctx.fillStyle   = '#f97316';
+    ctx.shadowColor = '#f97316';
+    ctx.shadowBlur  = 12;
+    ctx.fill();
+    ctx.shadowBlur  = 0;
+
+    // Border
+    ctx.strokeStyle = 'rgba(249,115,22,0.2)';
+    ctx.lineWidth   = 1;
+    ctx.strokeRect(0, 0, W, H);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     ALERT / LED UI
+  ═══════════════════════════════════════════════════ */
+  function updateAlertUI(ttc) {
+    const g = document.getElementById('ledG');
+    const y = document.getElementById('ledY');
+    const r = document.getElementById('ledR');
+    const bar    = document.getElementById('ttcBar');
+    const ttcEl  = document.getElementById('ttcVal');
+    const banner = document.getElementById('alertBanner');
+
+    [g, y, r].forEach(el => el.classList.add('off'));
+
+    let level = 'clear';
+    if (ttc >= 50) {
+      g.classList.remove('off');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--green)';
+      ttcEl.className = '';
+      banner.style.display = 'none';
+    } else if (ttc > TTC_CAUTION) {
+      g.classList.remove('off');
+      bar.style.width = Math.min(100, ttc / 10 * 100) + '%';
+      bar.style.background = 'var(--green)';
+      ttcEl.className = '';
+      banner.style.display = 'none';
+    } else if (ttc > TTC_DANGER) {
+      y.classList.remove('off');
+      bar.style.width = (ttc / TTC_CAUTION * 70) + '%';
+      bar.style.background = 'var(--yellow)';
+      ttcEl.className = 'warn';
+      banner.style.display = 'none';
+      level = 'caution';
+    } else {
+      r.classList.remove('off');
+      bar.style.width = Math.max(5, ttc / TTC_DANGER * 35) + '%';
+      bar.style.background = 'var(--red)';
+      ttcEl.className = 'danger';
+      banner.style.display = 'block';
+      level = 'danger';
+    }
+
+    // Reaction time: start timer when alert changes to caution/danger
+    if (level !== 'clear' && level !== sim.alertLevel) {
+      if (sim.reactionStart === null) sim.reactionStart = Date.now();
+    }
+    sim.alertLevel = level;
+
+    ttcEl.textContent = ttc >= 50 ? '—' : ttc.toFixed(1);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     EVENT LOG
+  ═══════════════════════════════════════════════════ */
+  function logEvent(msg, type = 'info') {
+    const log = document.getElementById('eventLog');
+    const t   = new Date();
+    const ts  = `${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+    const el  = document.createElement('div');
+    el.className = `log-entry log-${type}`;
+    el.innerHTML = `<span class="log-ts">${ts}</span><span class="log-msg">${msg}</span>`;
+    log.prepend(el);
+    while (log.children.length > 40) log.removeChild(log.lastChild);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     LANE PIPS
+  ═══════════════════════════════════════════════════ */
+  function updateLanePips() {
+    for (let i = 0; i < 3; i++) {
+      const el = document.getElementById(`lp${i}`);
+      if (el) el.classList.toggle('active', i === sim.lane);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     STATS UPDATE
+  ═══════════════════════════════════════════════════ */
+  function updateStats() {
+    document.getElementById('speedVal').textContent   = Math.round(sim.speed);
+    document.getElementById('speedSlider').value      = sim.speed;
+    document.getElementById('hdr-score').textContent  = Math.max(0, Math.round(sim.score));
+    document.getElementById('statDist').textContent   = Math.round(sim.distance);
+    document.getElementById('statHaz').textContent    = sim.hazards;
+    document.getElementById('statColl').textContent   = sim.collisions;
+    document.getElementById('statEvaded').textContent = sim.evaded;
+    drawSpeedometer(sim.speed);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     HELPER: TTC for a single obstacle
+  ═══════════════════════════════════════════════════ */
+  function calcObsTTC(obs) {
+    if (!obs.alive) return Infinity;
+    const dy = PLAYER_Y - obs.y;
+    if (dy < 0) return Infinity;
+    const closingMps = (sim.speed - obs.speed) / 3.6;
+    if (closingMps <= 0) return Infinity;
+    const distM = Math.max(0, dy - CAR_H) * M_PER_PX;
+    return distM / closingMps;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     RESET
+  ═══════════════════════════════════════════════════ */
+  function resetSim() {
+    Object.assign(sim, {
+      speed: 85, lane: 1, score: 1000, distance: 0,
+      hazards: 0, collisions: 0, evaded: 0,
+      reactionStart: null, reactionBest: null, alertLevel: 'clear', paused: false
+    });
+    document.getElementById('reactionVal').textContent  = '—';
+    document.getElementById('reactionBest').textContent = '—';
+    document.getElementById('pauseOverlay').classList.remove('visible');
+    document.getElementById('pauseBtn').textContent     = '⏸ PAUSE';
+    updateStats();
+    updateLanePips();
+    logEvent('System reset — new session', 'ok');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     WEATHER CYCLE
+  ═══════════════════════════════════════════════════ */
+  function cycleWeather() {
+    sim.weatherIdx = (sim.weatherIdx + 1) % WEATHER_MODES.length;
+    const w = WEATHER_MODES[sim.weatherIdx];
+    document.getElementById('weatherBadge').textContent = WEATHER_LABELS[w];
+    logEvent(`Weather → ${w}`, 'info');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     PHASER SCENE
+  ═══════════════════════════════════════════════════ */
+  class RoadScene extends Phaser.Scene {
+    constructor() {
+      super({ key: 'RoadScene' });
+      this.obstacles      = [];
+      this.rainDrops      = [];
+      this.roadOffset     = 0;
+      this.postOffset     = 0;
+      this.spawnTimer     = 0;
+      this.nextSpawn      = 2000;
+      this.ttcSampleTimer = 0;
+      this.laneCooldown   = 0;
+      this._spaceDown     = false;
+    }
+
+    create() {
+      // Layers
+      this.bgGfx      = this.add.graphics();
+      this.envGfx     = this.add.graphics();
+      this.roadGfx    = this.add.graphics();
+      this.carGfx     = this.add.graphics(); // obstacles
+      this.fxGfx      = this.add.graphics();
+      this.rainGfx    = this.add.graphics();
+      this.playerGfx  = this.add.graphics();
+
+      this._initRain();
+      this._drawPlayer();
+
+      // Keyboard
+      this.keys = this.input.keyboard.addKeys({
+        left: 'LEFT', right: 'RIGHT', up: 'UP', down: 'DOWN', space: 'SPACE', p: 'P'
+      });
+
+      this._bindUI();
+      logEvent('MCAS Elite engine started', 'ok');
+      logEvent(`Speed ${sim.speed} km/h · Lane CENTRE`, 'info');
+    }
+
     update(time, delta) {
       if (sim.paused) return;
+
       const dt = delta / 1000;
-      this._handleInput(dt);
-      this._drawWorld();
-      
+
+      // Input
+      this._handleKeys(dt, delta);
+
+      // Scroll
+      this.roadOffset  = (this.roadOffset  + sim.speed * PX_PER_KMH * dt) % DASH_CYCLE;
+      this.postOffset  = (this.postOffset  + sim.speed * PX_PER_KMH * dt) % 120;
+
+      // Draw world
+      this._drawBg();
+      this._drawRoad();
+      this._drawEnv();
+
+      // Move and redraw obstacle cars
       this.carGfx.clear();
-      this.obstacles.forEach(obs => {
-        if (!obs.alive) return;
-        obs.y += (sim.speed - obs.speed) * PX_PER_KMH * dt;
-        this._drawCar(obs, this.carGfx);
-        if (obs.y > GAME_H + 100) { obs.alive = false; sim.evaded++; sim.score += 20; }
-        if (obs.lane === sim.lane && Math.abs(obs.y - PLAYER_Y) < 60) {
-          obs.alive = false; sim.collisions++; sim.score -= 200; logEvent('COLLISION', 'danger');
-        }
-      });
+      const playerPxS = sim.speed * PX_PER_KMH;
+      for (const obs of this.obstacles) {
+        if (!obs.alive) continue;
+        const relPxS = (sim.speed - obs.speed) * PX_PER_KMH;
+        obs.y += relPxS * dt;
 
+        // Sudden brake event (rare)
+        if (obs.brakingIn > 0) {
+          obs.brakingIn -= delta;
+          if (obs.brakingIn <= 0 && !obs.braking) {
+            obs.braking = true;
+            obs.speed = Math.max(0, obs.speed * 0.4);
+            logEvent('Obstacle hard brake!', 'warn');
+          }
+        }
+
+        // Redraw car at current y
+        this._drawObstacleCar(obs);
+
+        if (obs.y > GAME_H + 100) {
+          obs.alive = false;
+          sim.evaded++;
+          sim.score += 20;
+          logEvent('Obstacle cleared +20pts', 'ok');
+        }
+      }
+
+      this.obstacles = this.obstacles.filter(o => o.alive);
+
+      // Spawn
       this.spawnTimer += delta;
-      if (this.spawnTimer > DIFFICULTY_CFG[sim.difficulty].spawnRange[0]) {
-        this._spawn(); this.spawnTimer = 0;
+      if (this.spawnTimer >= this.nextSpawn) {
+        this._spawnObstacle();
+        this.spawnTimer = 0;
+        const cfg = DIFFICULTY_CFG[sim.difficulty];
+        this.nextSpawn = Phaser.Math.Between(...cfg.spawnRange);
       }
-      this._drawPlayer();
-      this._updateUI();
-      drawRadar(this.obstacles);
-    }
 
-    _spawn() {
-      this.obstacles.push({ lane: Phaser.Math.Between(0,2), speed: sim.speed * 0.4, y: -100, alive: true, color: 0xef4444 });
-    }
+      // TTC
+      const ttc = this._calcTTC();
 
-    _drawWorld() {
-      this.bgGfx.clear(); this.bgGfx.fillStyle(0x05080f); this.bgGfx.fillRect(0,0,GAME_W,GAME_H);
-      this.roadGfx.clear(); this.roadGfx.fillStyle(0x141822); this.roadGfx.fillRect(ROAD_L, 0, LANE_W*3, GAME_H);
-      for(let i=1; i<3; i++) {
-        this.roadGfx.lineStyle(2, 0xffffff, 0.1);
-        this.roadGfx.lineBetween(ROAD_L + i*LANE_W, 0, ROAD_L + i*LANE_W, GAME_H);
+      // Collision check
+      this._checkCollisions();
+
+      // TTC sample
+      this.ttcSampleTimer += delta;
+      if (this.ttcSampleTimer >= 200) {
+        this.ttcSampleTimer = 0;
+        pushTTC(ttc < 50 ? ttc : 0);
+        drawRadar(this.obstacles);
       }
-    }
 
-    _drawCar(obs, g) {
-      const x = ROAD_L + obs.lane * LANE_W + (LANE_W-CAR_W)/2;
-      g.fillStyle(obs.color || 0x1a3a6e);
-      g.fillRoundedRect(x, obs.y, CAR_W, CAR_H, 6);
-    }
+      // Stats
+      sim.distance += sim.speed / 3.6 * dt;
+      sim.score    += sim.speed / 120 * 0.8 * dt; // score for safe distance at speed
 
-    _drawPlayer() {
+      // UI
+      updateAlertUI(ttc);
+      updateStats();
+
+      // Rain
+      this._updateRain(dt);
+
+      // Fog overlay
+      this._drawFog();
+
+      // Redraw player on top
       this.playerGfx.clear();
-      this._drawCar({lane: sim.lane, y: PLAYER_Y, color: 0x22d3ee}, this.playerGfx);
+      this._drawPlayer();
     }
 
-    _handleInput(dt) {
-      if (Phaser.Input.Keyboard.JustDown(this.keys.LEFT)) this._moveLane(-1);
-      if (Phaser.Input.Keyboard.JustDown(this.keys.RIGHT)) this._moveLane(1);
-    }
-
-    _moveLane(dir) {
-      sim.lane = Phaser.Math.Clamp(sim.lane + dir, 0, 2);
-      document.querySelectorAll('.lpip').forEach((p,i) => p.classList.toggle('active', i === sim.lane));
-    }
-
-    _updateUI() {
-      document.getElementById('speedVal').textContent = Math.round(sim.speed);
-      document.getElementById('hdr-score').textContent = Math.round(sim.score);
-      drawSpeedometer(sim.speed);
-      
+    /* ── TTC CALCULATION (real physics) ─────────── */
+    _calcTTC() {
       let minTTC = 99;
-      this.obstacles.forEach(o => {
-        if (o.lane === sim.lane && o.y < PLAYER_Y) {
-          let ttc = ( (PLAYER_Y - o.y) * M_PER_PX ) / ( (sim.speed - o.speed)/3.6 );
-          if (ttc > 0 && ttc < minTTC) minTTC = ttc;
+      for (const obs of this.obstacles) {
+        if (!obs.alive || obs.lane !== sim.lane) continue;
+        const dy = PLAYER_Y - obs.y;
+        if (dy < 0) continue;
+        const closingMps = (sim.speed - obs.speed) / 3.6;
+        if (closingMps <= 0) continue;
+        const distM = Math.max(0, dy - CAR_H) * M_PER_PX;
+        const ttc   = distM / closingMps;
+
+        if (ttc < minTTC) {
+          minTTC = ttc;
+          if (!obs.detected && ttc < TTC_CAUTION + 1.0) {
+            obs.detected = true;
+            sim.hazards++;
+            if (sim.reactionStart === null) sim.reactionStart = Date.now();
+            logEvent(`Hazard detected TTC=${ttc.toFixed(1)}s`, ttc < TTC_DANGER ? 'danger' : 'warn');
+          }
         }
-      });
-      const ttcEl = document.getElementById('ttcVal');
-      ttcEl.textContent = minTTC < 10 ? minTTC.toFixed(1) : '—';
-      document.getElementById('ttcBar').style.width = Math.max(0, Math.min(100, (minTTC/6)*100)) + '%';
-      document.getElementById('alertBanner').style.display = minTTC < TTC_DANGER ? 'block' : 'none';
+      }
+      return Math.min(minTTC, 99);
     }
 
+    /* ── COLLISION CHECK ─────────────────────────── */
+    _checkCollisions() {
+      for (const obs of this.obstacles) {
+        if (!obs.alive || obs.lane !== sim.lane || obs.hit) continue;
+        const dy = Math.abs(obs.y - PLAYER_Y);
+        if (dy < CAR_H * 0.72) {
+          obs.hit   = true;
+          obs.alive = false;
+
+          sim.collisions++;
+          sim.score   = Math.max(0, sim.score - 200);
+          sim.speed   = Math.max(0, sim.speed * 0.48);
+
+          // Flash
+          document.getElementById('collisionFlash').style.animation = 'none';
+          void document.getElementById('collisionFlash').offsetHeight;
+          document.getElementById('collisionFlash').style.animation = 'collFlash 0.55s ease-out forwards';
+
+          logEvent(`COLLISION at ${Math.round(sim.speed)} km/h`, 'danger');
+          updateStats();
+        }
+      }
+    }
+
+    /* ── SPAWN OBSTACLE ─────────────────────────── */
+    _spawnObstacle() {
+      const lane  = Phaser.Math.Between(0, LANE_COUNT - 1);
+      const cfg   = DIFFICULTY_CFG[sim.difficulty];
+      const [mn, mx] = cfg.speedRange;
+      const speed = sim.speed * Phaser.Math.FloatBetween(mn, mx);
+      const COLORS = [0xe53935, 0xfb8c00, 0x43a047, 0x1565c0, 0x6a1b9a, 0x00838f, 0xf06292];
+      const color  = Phaser.Math.RND.pick(COLORS);
+
+      // Chance of a braking event 2-5s after spawn
+      const brakingIn = Math.random() < 0.25 ? Phaser.Math.Between(2000, 5000) : -1;
+
+      this.obstacles.push({
+        lane, speed, color,
+        y: -CAR_H,
+        alive: true,
+        detected: false,
+        hit: false,
+        braking: false,
+        brakingIn,
+      });
+    }
+
+    /* ── DRAW OBSTACLE CAR ──────────────────────── */
+    _drawObstacleCar(obs) {
+      const g = this.carGfx;
+      const x = this._laneX(obs.lane);
+      const y = obs.y;
+      const W = CAR_W, H = CAR_H;
+      const hW = W / 2, hH = H / 2;
+
+      // Shadow
+      g.fillStyle(0x000000, 0.25);
+      g.fillEllipse(x + 3, y + hH + 4, W * 0.85, 12);
+
+      // Body
+      g.fillStyle(obs.color, 1);
+      g.fillRoundedRect(x - hW, y - hH, W, H, 7);
+
+      // Roof darker
+      g.fillStyle(0x000000, 0.25);
+      g.fillRoundedRect(x - hW + 5, y - hH + 10, W - 10, H * 0.42, 5);
+
+      // Rear window (facing player = bottom)
+      g.fillStyle(0x060c18, 0.92);
+      g.fillRoundedRect(x - hW + 7, y - hH + 6, W - 14, 18, 4);
+
+      // Front window (away from player = top)
+      g.fillStyle(0x060c18, 0.75);
+      g.fillRoundedRect(x - hW + 7, y + hH - 23, W - 14, 15, 3);
+
+      // Brake lights (facing player = bottom of obstacle)
+      const bLC = obs.braking ? 0xff1744 : 0xb71c1c;
+      g.fillStyle(bLC, 1);
+      g.fillRoundedRect(x - hW + 4, y + hH - 9, 14, 6, 2);
+      g.fillRoundedRect(x + hW - 18, y + hH - 9, 14, 6, 2);
+
+      // Wheels
+      g.fillStyle(0x0a0c10, 1);
+      g.fillRoundedRect(x - hW - 5, y - hH + 8, 8, 18, 3);
+      g.fillRoundedRect(x + hW - 3, y - hH + 8, 8, 18, 3);
+      g.fillRoundedRect(x - hW - 5, y + hH - 26, 8, 18, 3);
+      g.fillRoundedRect(x + hW - 3, y + hH - 26, 8, 18, 3);
+    }
+
+    /* ── DRAW PLAYER CAR ────────────────────────── */
+    _drawPlayer() {
+      const g  = this.playerGfx;
+      const x  = this._laneX(sim.lane);
+      const y  = PLAYER_Y;
+      const W  = CAR_W, H = CAR_H;
+      const hW = W / 2, hH = H / 2;
+
+      // Shadow
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(x + 3, y + hH + 4, W * 0.85, 12);
+
+      // Body — midnight blue
+      g.fillStyle(0x1a3a6e, 1);
+      g.fillRoundedRect(x - hW, y - hH, W, H, 7);
+
+      // Roof
+      g.fillStyle(0x0f2340, 1);
+      g.fillRoundedRect(x - hW + 5, y - hH + 10, W - 10, H * 0.42, 5);
+
+      // Front windscreen (top = toward obstacles = ahead)
+      g.fillStyle(0x0a1828, 0.88);
+      g.fillRoundedRect(x - hW + 7, y - hH + 7, W - 14, 19, 4);
+
+      // Rear windscreen
+      g.fillStyle(0x0a1828, 0.72);
+      g.fillRoundedRect(x - hW + 7, y + hH - 25, W - 14, 16, 3);
+
+      // Headlights (front = top)
+      g.fillStyle(0xfff9c4, 1);
+      g.fillRoundedRect(x - hW + 4, y - hH + 2, 14, 6, 2);
+      g.fillRoundedRect(x + hW - 18, y - hH + 2, 14, 6, 2);
+
+      // Headlight beams
+      g.fillStyle(0xfff9c4, 0.05);
+      g.fillTriangle(x - hW + 4, y - hH + 8, x - hW - 25, y - 40, x - hW + 18, y - 40);
+      g.fillTriangle(x + hW - 4, y - hH + 8, x + hW + 25, y - 40, x + hW - 18, y - 40);
+
+      // Taillights (rear = bottom)
+      g.fillStyle(0xd50000, 1);
+      g.fillRoundedRect(x - hW + 4, y + hH - 9, 14, 6, 2);
+      g.fillRoundedRect(x + hW - 18, y + hH - 9, 14, 6, 2);
+
+      // Wheels
+      g.fillStyle(0x0a0c10, 1);
+      g.fillRoundedRect(x - hW - 5, y - hH + 8, 8, 18, 3);
+      g.fillRoundedRect(x + hW - 3, y - hH + 8, 8, 18, 3);
+      g.fillRoundedRect(x - hW - 5, y + hH - 26, 8, 18, 3);
+      g.fillRoundedRect(x + hW - 3, y + hH - 26, 8, 18, 3);
+
+      // Wheel rims
+      g.fillStyle(0x2a3550, 1);
+      g.fillCircle(x - hW - 1, y - hH + 17, 4);
+      g.fillCircle(x + hW + 1, y - hH + 17, 4);
+      g.fillCircle(x - hW - 1, y + hH - 17, 4);
+      g.fillCircle(x + hW + 1, y + hH - 17, 4);
+    }
+
+    /* ── DRAW BACKGROUND ────────────────────────── */
+    _drawBg() {
+      const g = this.bgGfx;
+      g.clear();
+
+      // Sky gradient
+      g.fillGradientStyle(0x05080f, 0x05080f, 0x080d16, 0x080d16, 1);
+      g.fillRect(0, 0, GAME_W, GAME_H * 0.45);
+
+      // Ground beyond road
+      g.fillStyle(0x060910, 1);
+      g.fillRect(0, GAME_H * 0.45, GAME_W, GAME_H * 0.55);
+
+      // Road shoulders
+      g.fillStyle(0x0a0f18, 1);
+      g.fillRect(0, 0, ROAD_L, GAME_H);
+      g.fillRect(ROAD_R, 0, GAME_W - ROAD_R, GAME_H);
+
+      // Shoulder texture streaks
+      const ySh = (this.roadOffset * 0.3);
+      for (let yi = -60; yi < GAME_H + 60; yi += 60) {
+        const yy = ((yi + ySh) % (GAME_H + 120)) - 60;
+        g.fillStyle(0x0f1a20, 0.4);
+        g.fillRect(6, yy, ROAD_L - 10, 2);
+        g.fillRect(ROAD_R + 4, yy, GAME_W - ROAD_R - 10, 2);
+      }
+
+      // Stars (static pattern)
+      g.fillStyle(0x8ba0bc, 0.35);
+      const stars = [[45,30],[120,18],[200,40],[310,12],[420,35],[510,22],[600,15],[640,40],[30,55],[180,65],[350,50],[550,60]];
+      for (const [sx, sy] of stars) {
+        g.fillRect(sx, sy, 1, 1);
+      }
+    }
+
+    /* ── DRAW ROAD ──────────────────────────────── */
+    _drawRoad() {
+      const g = this.roadGfx;
+      g.clear();
+
+      // Road surface
+      g.fillStyle(0x141822, 1);
+      g.fillRect(ROAD_L, 0, ROAD_W, GAME_H);
+
+      // Surface texture
+      g.fillStyle(0x191f2b, 0.35);
+      for (let xi = 0; xi < LANE_COUNT; xi++) {
+        g.fillRect(ROAD_L + xi * LANE_W + LANE_W * 0.45, 0, 4, GAME_H);
+      }
+
+      // Kerb alternating red/white
+      for (let yi = (this.roadOffset * 0.6) % 40 - 40; yi < GAME_H + 40; yi += 40) {
+        g.fillStyle(0xfafafa, 0.85); g.fillRect(ROAD_L - 5, yi, 5, 20);
+        g.fillStyle(0xe53935, 0.7);  g.fillRect(ROAD_L - 5, yi + 20, 5, 20);
+        g.fillStyle(0xfafafa, 0.85); g.fillRect(ROAD_R,     yi, 5, 20);
+        g.fillStyle(0xe53935, 0.7);  g.fillRect(ROAD_R,     yi + 20, 5, 20);
+      }
+
+      // Dashed lane markers (animated)
+      for (let lane = 1; lane < LANE_COUNT; lane++) {
+        const lx = ROAD_L + lane * LANE_W;
+        for (let yi = (this.roadOffset % DASH_CYCLE) - DASH_CYCLE; yi < GAME_H + DASH_CYCLE; yi += DASH_CYCLE) {
+          g.fillStyle(0xffffff, 0.15);
+          g.fillRect(lx - 2, yi, 4, DASH_CYCLE * 0.5);
+        }
+      }
+
+      // Road edge lines
+      g.fillStyle(0xeeeeee, 0.6);
+      g.fillRect(ROAD_L - 5, 0, 2, GAME_H);
+      g.fillRect(ROAD_R + 3, 0, 2, GAME_H);
+    }
+
+    /* ── DRAW ENVIRONMENT (roadside posts) ───────── */
+    _drawEnv() {
+      const g = this.envGfx;
+      g.clear();
+      const postSpacing = 120;
+      for (let yi = (this.postOffset % postSpacing) - postSpacing; yi < GAME_H + postSpacing; yi += postSpacing) {
+        // Left post
+        g.fillStyle(0x1e3048, 1);
+        g.fillRect(ROAD_L - 22, yi, 4, 28);
+        g.fillStyle(0xf97316, 0.6);
+        g.fillRect(ROAD_L - 22, yi, 4, 4);
+        // Right post
+        g.fillRect(ROAD_R + 18, yi, 4, 28);
+        g.fillStyle(0xf97316, 0.6);
+        g.fillRect(ROAD_R + 18, yi, 4, 4);
+      }
+    }
+
+    /* ── RAIN ────────────────────────────────────── */
+    _initRain() {
+      this.rainDrops = [];
+      for (let i = 0; i < 140; i++) {
+        this.rainDrops.push({
+          x: Math.random() * GAME_W,
+          y: Math.random() * GAME_H,
+          len: 8 + Math.random() * 14,
+          spd: 400 + Math.random() * 300
+        });
+      }
+    }
+
+    _updateRain(dt) {
+      const g = this.rainGfx;
+      g.clear();
+      const weather = WEATHER_MODES[sim.weatherIdx];
+      if (weather !== 'rain') return;
+
+      g.lineStyle(1, 0x7ec8e3, 0.35);
+      for (const d of this.rainDrops) {
+        d.y += d.spd * dt;
+        d.x += 30 * dt;
+        if (d.y > GAME_H) { d.y = -d.len; d.x = Math.random() * GAME_W; }
+        g.beginPath();
+        g.moveTo(d.x, d.y);
+        g.lineTo(d.x + 4, d.y + d.len);
+        g.strokePath();
+      }
+    }
+
+    _drawFog() {
+      const g = this.fxGfx;
+      g.clear();
+      const weather = WEATHER_MODES[sim.weatherIdx];
+      if (weather !== 'fog') return;
+      g.fillGradientStyle(0xd0e0f0, 0xd0e0f0, 0xd0e0f0, 0xd0e0f0, 0);
+      g.fillGradientStyle(0xb0c8e0, 0xb0c8e0, 0x080d16, 0x080d16, 0.0);
+      // Simple fog: semi-transparent overlay stronger at horizon
+      for (let yi = 0; yi < GAME_H * 0.6; yi += 4) {
+        const alpha = (1 - yi / (GAME_H * 0.6)) * 0.55;
+        g.fillStyle(0xc8d8e8, alpha);
+        g.fillRect(0, yi, GAME_W, 4);
+      }
+    }
+
+    /* ── INPUT ───────────────────────────────────── */
+    _handleKeys(dt, delta) {
+      if (Phaser.Input.Keyboard.JustDown(this.keys.p)) this._togglePause();
+      if (sim.paused) return;
+
+      if (this.keys.up.isDown)    this._setSpeed(Math.min(120, sim.speed + 28 * dt));
+      if (this.keys.down.isDown)  this._setSpeed(Math.max(0,   sim.speed - 35 * dt));
+
+      if (this.keys.space.isDown && !this._spaceDown) {
+        this._spaceDown = true;
+        this._setSpeed(Math.max(0, sim.speed - 35));
+        this._recordReaction();
+        logEvent('Emergency brake!', 'warn');
+      }
+      if (!this.keys.space.isDown) this._spaceDown = false;
+
+      if (this.laneCooldown > 0) { this.laneCooldown -= delta; }
+      else {
+        if (Phaser.Input.Keyboard.JustDown(this.keys.left))  this._changeLane(-1);
+        if (Phaser.Input.Keyboard.JustDown(this.keys.right)) this._changeLane(1);
+      }
+    }
+
+    _togglePause() {
+      sim.paused = !sim.paused;
+      document.getElementById('pauseOverlay').classList.toggle('visible', sim.paused);
+      document.getElementById('pauseBtn').textContent = sim.paused ? '▶ RESUME' : '⏸ PAUSE';
+      document.getElementById('pauseBtn').classList.toggle('paused', sim.paused);
+      logEvent(sim.paused ? 'Simulation paused' : 'Simulation resumed', 'info');
+    }
+
+    _setSpeed(v) {
+      sim.speed = Math.round(Math.max(0, Math.min(120, v)));
+      document.getElementById('speedSlider').value = sim.speed;
+    }
+
+    _changeLane(dir) {
+      const next = sim.lane + dir;
+      if (next < 0 || next >= LANE_COUNT) return;
+      sim.lane = next;
+      this.playerGfx.x = 0;
+      this.laneCooldown = 350;
+      this._recordReaction();
+      updateLanePips();
+      logEvent(`Lane → ${['LEFT','CENTRE','RIGHT'][sim.lane]}`, 'info');
+    }
+
+    _recordReaction() {
+      if (sim.reactionStart !== null) {
+        const rt = Date.now() - sim.reactionStart;
+        document.getElementById('reactionVal').textContent = rt;
+        if (sim.reactionBest === null || rt < sim.reactionBest) {
+          sim.reactionBest = rt;
+          document.getElementById('reactionBest').textContent = rt;
+        }
+        sim.reactionStart = null;
+      }
+    }
+
+    _laneX(lane) {
+      return ROAD_L + lane * LANE_W + LANE_W / 2;
+    }
+
+    /* ── UI BINDINGS ─────────────────────────────── */
     _bindUI() {
-      document.getElementById('brakeBtn').onclick = () => { sim.speed = Math.max(0, sim.speed - 15); };
-      document.getElementById('accelBtn').onclick = () => { sim.speed = Math.min(120, sim.speed + 15); };
-      document.getElementById('laneLeftBtn').onclick = () => this._moveLane(-1);
-      document.getElementById('laneRightBtn').onclick = () => this._moveLane(1);
+      document.getElementById('speedSlider').addEventListener('input', e => {
+        this._setSpeed(parseInt(e.target.value));
+      });
+      document.getElementById('brakeBtn').addEventListener('click', () => {
+        this._setSpeed(sim.speed - 15);
+        this._recordReaction();
+        logEvent(`Brake → ${sim.speed} km/h`, 'warn');
+      });
+      document.getElementById('accelBtn').addEventListener('click', () => {
+        this._setSpeed(sim.speed + 15);
+        logEvent(`Accel → ${sim.speed} km/h`, 'info');
+      });
+      document.getElementById('laneLeftBtn').addEventListener('click', () => {
+        this._changeLane(-1);
+      });
+      document.getElementById('laneRightBtn').addEventListener('click', () => {
+        this._changeLane(1);
+      });
+      document.getElementById('weatherBtn').addEventListener('click', cycleWeather);
+      document.getElementById('pauseBtn').addEventListener('click', () => this._togglePause());
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        resetSim();
+        this.obstacles.forEach(o => { o.alive = false; });
+        this.obstacles = [];
+      });
+      document.getElementById('diffSelect').addEventListener('change', e => {
+        sim.difficulty = e.target.value;
+        logEvent(`Difficulty → ${e.target.value.toUpperCase()}`, 'info');
+      });
     }
   }
 
+  /* ═══════════════════════════════════════════════════
+     BOOTSTRAP
+  ═══════════════════════════════════════════════════ */
   window.addEventListener('DOMContentLoaded', () => {
     initChart();
-    new Phaser.Game({
-      type: Phaser.AUTO, width: GAME_W, height: GAME_H,
-      parent: 'game-container', backgroundColor: '#05070b',
-      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-      scene: [RoadScene]
-    });
+    drawSpeedometer(85);
+    drawRadar([]);
+    updateLanePips();
+
+    const config = {
+      type:            Phaser.AUTO,
+      width:           GAME_W,
+      height:          GAME_H,
+      parent:          'game-container',
+      backgroundColor: '#05070b',
+      scene:           [RoadScene],
+      input: {
+        keyboard: { capture: [37, 38, 39, 40, 32, 80] }
+      }
+    };
+
+    new Phaser.Game(config);
+
+    // Prevent arrow key scroll
+    window.addEventListener('keydown', e => {
+      if ([32, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+    }, { passive: false });
+
+    logEvent('MCAS Elite v3.0 initialized', 'ok');
+    logEvent('Sensors calibrated · GPS locked', 'ok');
   });
   </script>
 </body>
