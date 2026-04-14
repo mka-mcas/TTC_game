@@ -1458,6 +1458,7 @@
     }
 
     create() {
+	
       // Layers
       this.bgGfx      = this.add.graphics();
       this.envGfx     = this.add.graphics();
@@ -1569,7 +1570,15 @@
       this.playerGfx.clear();
       this._drawPlayer();
     }
-
+const fullscreenBtn = this.add.text(10, 10, 'Fullscreen', { fontSize: '16px', color: '#f97316' })
+  .setInteractive()
+  .on('pointerdown', () => {
+    if (!this.scale.isFullscreen) {
+      this.scale.startFullscreen();
+    } else {
+      this.scale.stopFullscreen();
+    }
+  });
     /* ── TTC CALCULATION (real physics) ─────────── */
     _calcTTC() {
       let minTTC = 99;
